@@ -33,3 +33,5 @@ unsigned short stack[16];
 unsigned short sp;
 
 unsigned char key[16];
+
+typedef void (* optcode_handler)(unsigned short optcode);
