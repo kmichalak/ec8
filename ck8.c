@@ -14,7 +14,7 @@ void fetch_opcode(Cpu *cpu) {
 }
 
 void handle_opcode(Cpu *cpu) {;
-	cpu->handlers[cpu->opcode & 0xF000](cpu->opcode);
+	cpu->handlers[cpu->opcode & 0xF000](cpu);
 }
 
 void initialize(Cpu *cpu) {

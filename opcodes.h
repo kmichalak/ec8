@@ -1,58 +1,77 @@
 #ifndef OPCODES_H
 #define OPCODES_H
 
+typedef struct Cpu Cpu;
+
+typedef void (* opcode_handler)(Cpu *cpu);
+
+struct Cpu {
+	unsigned char memory[4096];
+	unsigned char registers[16];
+	unsigned short opcode; 
+	unsigned short I;
+	unsigned short PC;
+	unsigned short stack[16];
+	unsigned short sp;
+	unsigned char key[16];
+	opcode_handler handlers[16];
+	int (*run_cycle)(Cpu *cpu);
+	void (*fetch_opcode)(Cpu *cpu);
+	void (*handle_opcode)(Cpu *cpu);
+};
+
 // 00EX
-void handle_0(unsigned short opcode);
+void handle_0(Cpu *cpu);
 
 // 00E0
-void clear_screen(unsigned short opcode);
+void clear_screen(Cpu *cpu);
 
 // 00EE
-void return_from_rsubutine(unsigned short opcode);
+void return_from_rsubutine(Cpu *cpu);
 
 // 1NNN
-void jump(unsigned short opcoder);
+void jump(Cpu *cpur);
 
 // 2NNN
-void call_subrutine(unsigned short opcode);
+void call_subrutine(Cpu *cpu);
 
 // 3XNN
-void vx_equals(unsigned short opcode);
+void vx_equals(Cpu *cpu);
 
 // 4XNN
-void vx_not_equals(unsigned short opcode);
+void vx_not_equals(Cpu *cpu);
 
 // 5XY0
-void vx_equals_vy(unsigned short opcode);
+void vx_equals_vy(Cpu *cpu);
 
 // 6XNN
-void set_vx(unsigned short opcode);
+void set_vx(Cpu *cpu);
 
 // 7XNN
-void add_to_vx(unsigned short opcode);
+void add_to_vx(Cpu *cpu);
 
 // 8XYN
-void handle_8(unsigned short opcode);
+void handle_8(Cpu *cpu);
 
 // 9XY0
-void vx_not_equals_vy(unsigned short opcode);
+void vx_not_equals_vy(Cpu *cpu);
 
 // ANNN
-void set_prog_counter(unsigned short opcode);
+void set_prog_counter(Cpu *cpu);
 
 // BNNN
-void offset_jump(unsigned short opcode);
+void offset_jump(Cpu *cpu);
 
 // CXNN
-void random_vx(unsigned short opcode);
+void random_vx(Cpu *cpu);
 
 // DXYN
-void draw(unsigned short opcode);
+void draw(Cpu *cpu);
 
 // EXNN
-void handle_key(unsigned short opcode);
+void handle_key(Cpu *cpu);
 
 // FXNN
-void handle_f(unsigned short opcode);
+void handle_f(Cpu *cpu);
 
 #endif 
