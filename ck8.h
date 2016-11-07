@@ -1,3 +1,5 @@
+#ifndef CK8_H
+#define CK8_H
 
 // General description of CHIP-8 can be found at 
 // https://en.wikipedia.org/wiki/CHIP-8#Virtual_machine_description.
@@ -19,19 +21,20 @@
 #define VE 0x0E
 #define VF 0x0F
 
-unsigned char memory[4096];
-unsigned char registers[VF];
-unsigned short opcode; 
+typedef struct Cpu {
+	unsigned char memory[4096];
+	unsigned char registers[VF];
+	unsigned short opcode; 
+	unsigned short I;
+	unsigned short PC;
+	unsigned short stack[16];
+	unsigned short sp;
+	unsigned char key[16];
+} Cpu;
 
-// Address register
-unsigned short I;
+typedef void (* opcode_handler)(unsigned short opcode);
 
-// Program Counter - it'll be used to 
-unsigned short PC;
+// typedef opcode_handler opcode_handlers[16];
 
-unsigned short stack[16];
-unsigned short sp;
 
-unsigned char key[16];
-
-typedef void (* optcode_handler)(unsigned short optcode);
+#endif
