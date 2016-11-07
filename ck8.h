@@ -21,7 +21,11 @@
 #define VE 0x0E
 #define VF 0x0F
 
-typedef struct Cpu {
+typedef struct Cpu Cpu;
+
+typedef void (* opcode_handler)(unsigned short opcode);
+
+struct Cpu {
 	unsigned char memory[4096];
 	unsigned char registers[VF];
 	unsigned short opcode; 
@@ -30,11 +34,10 @@ typedef struct Cpu {
 	unsigned short stack[16];
 	unsigned short sp;
 	unsigned char key[16];
-} Cpu;
-
-typedef void (* opcode_handler)(unsigned short opcode);
-
-// typedef opcode_handler opcode_handlers[16];
-
+	opcode_handler handlers[16];
+	int (*run_cycle)(Cpu *cpu);
+	void (*fetch_opcode)(Cpu *cpu);
+	void (*handle_opcode)(Cpu *cpu);
+};
 
 #endif
