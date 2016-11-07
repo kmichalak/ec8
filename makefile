@@ -8,5 +8,9 @@ all: $(TARGET)
 $(TARGET): $(MAIN)
 	$(CC) $(CFLAGS) -o $(TARGET) $(MAIN)
 
+test: 
+	$(MAKE) -C tests
+
 clean:
 	$(RM) $(TARGET)
+	$(MAKE) clean -C tests
