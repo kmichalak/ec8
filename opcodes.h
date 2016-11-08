@@ -3,7 +3,7 @@
 
 #include "cpu.h"
 
-// typedef opcode_handler handlers[16];
+typedef opcode_handler handlers[16];
 
 // 00EX
 void handle_0(Cpu *cpu);
@@ -59,4 +59,4 @@ void handle_key(Cpu *cpu);
 // FXNN
 void handle_f(Cpu *cpu);
 
-#endif 
+#endif

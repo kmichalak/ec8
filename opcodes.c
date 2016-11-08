@@ -25,7 +25,10 @@ void vx_not_equals(Cpu *cpu) {}
 void vx_equals_vy(Cpu *cpu) {}
 
 // 6XNN
-void set_vx(Cpu *cpu) {}
+void set_vx(Cpu *cpu) {
+	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
+	cpu->registers[reg_num] = cpu->opcode & 0x00ff;
+}
 
 // 7XNN
 void add_to_vx(Cpu *cpu) {}

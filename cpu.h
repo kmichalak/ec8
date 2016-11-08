@@ -6,8 +6,6 @@ typedef struct Cpu Cpu;
 
 typedef void (* opcode_handler)(Cpu *cpu);
 
-
-
 struct Cpu {
 	unsigned char memory[4096];
 	unsigned char registers[16];
@@ -22,6 +20,8 @@ struct Cpu {
 	void (*fetch_opcode)(Cpu *cpu);
 	void (*handle_opcode)(Cpu *cpu);
 };
+
+void initialize(Cpu *cpu);
 
 
 #endif

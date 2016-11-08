@@ -18,7 +18,7 @@ $(MAIN).o: $(MAIN).c $(OPCODES).h $(CPU).h
 	$(CC) $(CFLAGS) -c $(MAIN).c
 
 
-$(OPCODES).o: $(OPCODES).c $(OPCODES).h $(CPU.h)
+$(OPCODES).o: $(OPCODES).c $(OPCODES).h $(CPU).h
 	$(CC) $(CFLAGS) -c $(OPCODES).c
 
 
