@@ -31,7 +31,10 @@ void set_vx(Cpu *cpu) {
 }
 
 // 7XNN
-void add_to_vx(Cpu *cpu) {}
+void add_to_vx(Cpu *cpu) {
+	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
+	cpu->registers[reg_num] += cpu->opcode & 0x00ff;
+}
 
 // 8XYN
 void handle_8(Cpu *cpu) {}
