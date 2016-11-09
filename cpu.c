@@ -1,29 +1,23 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "cpu.h"
 #include "opcodes.h"
 
 opcode_handler ops_handlers[16];
 
-void fetch_opcode(Cpu *cpu) {
+static void fetch_opcode(Cpu *cpu) {
 	cpu->opcode = cpu->memory[cpu->PC] << 8 | cpu->memory[cpu->PC + 1];
 }
 
-void handle_opcode(Cpu *cpu) {
-	// cpu->handlers[cpu->opcode & 0xF000](cpu);
-	printf("Fetching opcode group information\n");
+static void handle_opcode(Cpu *cpu) {
 	// single opcode is two bytes (16 bits) so if we shift it by 12 bits
 	// we will receive opcode group marker
 	unsigned short opcode_group = (cpu->opcode & 0xF000) >> 12;
 
-	printf("Got opcode_group %d\n", opcode_group);
-
-	printf("Calling opcode handler\n");
 	opcode_handler handler = ops_handlers[opcode_group];
 
-	printf("opcode_handler read from opc_handlers\n");
 	handler(cpu);
-
 }
 
 void initialize(Cpu *cpu) {
@@ -31,6 +25,10 @@ void initialize(Cpu *cpu) {
 
 	cpu->PC = 0;
 	cpu->I = 0;
+	cpu->sp = 0;
+
+	memset(cpu->memory, 0, sizeof(cpu->memory));
+	memset(cpu->registers, 0, sizeof(cpu->registers));
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;

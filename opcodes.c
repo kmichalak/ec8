@@ -15,7 +15,15 @@ void jump(Cpu *cpu) {
 }
 
 // 2NNN
-void call_subrutine(Cpu *cpu) {}
+void call_subrutine(Cpu *cpu) {
+	cpu->stack[cpu->sp] = cpu->PC & 0xffff;
+	cpu->sp += 1;
+
+	cpu->PC = cpu->opcode & 0x0fff;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+}
 
 // 3XNN
 void vx_equals(Cpu *cpu) {}
@@ -30,12 +38,14 @@ void vx_equals_vy(Cpu *cpu) {}
 void set_vx(Cpu *cpu) {
 	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
 	cpu->registers[reg_num] = cpu->opcode & 0x00ff;
+	cpu->PC += 2;
 }
 
 // 7XNN
 void add_to_vx(Cpu *cpu) {
 	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
 	cpu->registers[reg_num] += cpu->opcode & 0x00ff;
+	cpu->PC += 2;
 }
 
 // 8XYN
