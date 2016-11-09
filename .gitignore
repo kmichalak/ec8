@@ -1,0 +1,47 @@
+# Project output file
+ck8
+ck8-test
+bin/
+*test-*
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# KDevelop files
+*.kdev4
+*.cbp
+*.user
+
+# Eclipse files
+.cproject
+
+# Idea files
+.idea
+
+# Temporary files
+*swp
+*~
+
+# Develop files 
+*.kdev*
+
+# Temporary files
+*swp
+*.autosave
+
+# CMake files
+CMakeFiles
+CMakeCache.txt
+Makefile
+*install.cmake
