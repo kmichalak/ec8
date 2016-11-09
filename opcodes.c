@@ -36,7 +36,14 @@ void vx_equals(Cpu *cpu) {
 }
 
 // 4XNN
-void vx_not_equals(Cpu *cpu) {}
+void vx_not_equals(Cpu *cpu) {
+	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
+	unsigned char val = cpu->opcode & 0x00ff;
+	if (cpu->registers[reg_num] != val) {
+		cpu->PC += 2;
+	}
+	cpu->PC += 2;
+}
 
 // 5XY0
 void vx_equals_vy(Cpu *cpu) {}
