@@ -61,13 +61,27 @@ static void test_add_to_vx_can_add_to_all_registers(void **state) {
 	free(cpu1);
 }
 
+static void test_jump_sets_program_counter_to_address(void **state)  {
+	Cpu *cpu = malloc(sizeof(Cpu));
 
+	initialize(cpu);
+	cpu->memory[cpu->PC] = 0x1A;
+	cpu->memory[cpu->PC+1] = 0xBC;
+	
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->PC == 0x0ABC);
+
+	free(cpu);
+}
 
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
 		cmocka_unit_test(test_add_to_vx_can_add_to_all_registers),
-		cmocka_unit_test(test_set_vx_can_write_to_all_registers)
+		cmocka_unit_test(test_set_vx_can_write_to_all_registers),
+		cmocka_unit_test(test_jump_sets_program_counter_to_address)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

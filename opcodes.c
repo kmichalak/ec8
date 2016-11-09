@@ -10,7 +10,9 @@ void clear_screen(Cpu *cpu) {}
 void return_from_rsubutine(Cpu *cpu) {}
 
 // 1NNN
-void jump(Cpu *cpur) {}
+void jump(Cpu *cpu) {
+	cpu->PC = cpu->opcode & 0x0fff;
+}
 
 // 2NNN
 void call_subrutine(Cpu *cpu) {}
