@@ -39,8 +39,6 @@ static void test_set_vx_can_write_to_all_registers(void **state) {
 		cpu->memory[cpu->PC] = 0x60 | i;
 		cpu->memory[cpu->PC + 1] = reg_val;
 
-
-
 		cpu->fetch_opcode(cpu);
 		cpu->handle_opcode(cpu);
 	}
@@ -174,6 +172,72 @@ static void test_calls_subroutine(void **state) {
 	test_free(cpu);
 }
 
+static void test_skips_one_instruction_when_cx_equals_nn(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	const char expected_registers[16] = {
+		0x00, 0x12, 0x13, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+	};
+
+	cpu->registers[1] = 0x12;
+
+	cpu->memory[cpu->PC] = 0x31;
+	cpu->memory[cpu->PC + 1] = 0x12;
+
+	cpu->memory[cpu->PC + 2] = 0x61;
+	cpu->memory[cpu->PC + 3] = 0x66;
+
+	cpu->memory[cpu->PC + 4] = 0x62;
+	cpu->memory[cpu->PC + 5] = 0x13;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(expected_registers, cpu->registers, 
+		sizeof(expected_registers));
+
+	test_free(cpu);
+}
+
+static void test_executes_next_instruction_when_cx_not_equal_to_nn(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	const char expected_registers[16] = {
+		0x00, 0x66, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+	};
+
+	cpu->memory[cpu->PC] = 0x31;
+	cpu->memory[cpu->PC + 1] = 0x12;
+
+	cpu->memory[cpu->PC + 2] = 0x61;
+	cpu->memory[cpu->PC + 3] = 0x66;
+
+	cpu->memory[cpu->PC + 4] = 0x62;
+	cpu->memory[cpu->PC + 5] = 0x13;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(expected_registers, cpu->registers, 
+		sizeof(expected_registers));
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -184,7 +248,9 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_call_subroutine_increments_stack_pointer),
 		cmocka_unit_test(test_call_subroutine_puts_current_address_in_stack),
 		cmocka_unit_test(test_call_subroutine_sets_program_counter),
-		cmocka_unit_test(test_calls_subroutine)
+		cmocka_unit_test(test_calls_subroutine),
+		cmocka_unit_test(test_skips_one_instruction_when_cx_equals_nn),
+		cmocka_unit_test(test_executes_next_instruction_when_cx_not_equal_to_nn)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
