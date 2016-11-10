@@ -97,6 +97,7 @@ void vx_not_equals_vy(Cpu *cpu) {
 // ANNN
 void set_prog_counter(Cpu *cpu) {
 	cpu->I = cpu->opcode & 0x0fff;
+	cpu->PC += 2;
 }
 
 // BNNN

@@ -463,7 +463,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_executes_next_instruction_when_cx_equal_to_nn),
 		cmocka_unit_test(test_skips_one_instruction_when_vx_not_eq_to_vy),
 		cmocka_unit_test(test_executes_next_instruction_when_vx_eq_vy),
-		cmocka_unit_test(test_ANNN_sets_I_to_NNN)
+		cmocka_unit_test(test_ANNN_sets_I_to_NNN),
+		cmocka_unit_test(test_ANNN_increases_PC)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
