@@ -101,7 +101,9 @@ void set_prog_counter(Cpu *cpu) {
 }
 
 // BNNN
-void offset_jump(Cpu *cpu) {}
+void offset_jump(Cpu *cpu) {
+	cpu->PC = (cpu->opcode & 0x0fff) + cpu->registers[0];
+}
 
 // CXNN
 void random_vx(Cpu *cpu) {}

@@ -451,12 +451,12 @@ static void test_BNNN_jumps_to_address_NNN_with_vx_offset(void **state) {
 	cpu->memory[cpu->PC] = 0xB7;
 	cpu->memory[cpu->PC+1] = 0xBC;
 	
-	cpu->registers[0x07] = 0x011;
+	cpu->registers[0x0] = 0x011;
 
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->PC == 0x0ABC);
+	assert_true(cpu->PC == 0x07CD);
 
 	test_free(cpu);	
 }
