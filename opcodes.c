@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "opcodes.h"
 
 // 00EX
@@ -106,7 +107,12 @@ void offset_jump(Cpu *cpu) {
 }
 
 // CXNN
-void random_vx(Cpu *cpu) {}
+void random_vx(Cpu *cpu) {
+	unsigned short val = cpu->opcode & 0x00ff;
+	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
+
+	cpu->registers[reg_num] = val & (rand() % 256);
+}
 
 // DXYN
 void draw(Cpu *cpu) {}
