@@ -444,6 +444,23 @@ static void test_ANNN_increases_PC(void **state) {
 	test_free(cpu);
 }
 
+static void test_BNNN_jumps_to_address_NNN_with_vx_offset(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+
+	initialize(cpu);
+	cpu->memory[cpu->PC] = 0xB7;
+	cpu->memory[cpu->PC+1] = 0xBC;
+	
+	cpu->registers[0x07] = 0x011;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->PC == 0x0ABC);
+
+	test_free(cpu);	
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -464,7 +481,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_skips_one_instruction_when_vx_not_eq_to_vy),
 		cmocka_unit_test(test_executes_next_instruction_when_vx_eq_vy),
 		cmocka_unit_test(test_ANNN_sets_I_to_NNN),
-		cmocka_unit_test(test_ANNN_increases_PC)
+		cmocka_unit_test(test_ANNN_increases_PC),
+		cmocka_unit_test(test_BNNN_jumps_to_address_NNN_with_vx_offset)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
