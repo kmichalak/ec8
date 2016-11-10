@@ -344,6 +344,75 @@ static void test_executes_next_instruction_when_cx_equal_to_nn(void **state) {
 	test_free(cpu);
 }
 
+static void test_skips_one_instruction_when_vx_not_eq_to_vy(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	const char expected_registers[16] = {
+		0x00, 0x12, 0x13, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+	};
+
+	cpu->registers[1] = 0x12;
+
+	cpu->memory[cpu->PC] = 0x91;
+	cpu->memory[cpu->PC + 1] = 0x20;
+
+	cpu->memory[cpu->PC + 2] = 0x61;
+	cpu->memory[cpu->PC + 3] = 0x66;
+
+	cpu->memory[cpu->PC + 4] = 0x62;
+	cpu->memory[cpu->PC + 5] = 0x13;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(expected_registers, cpu->registers, 
+		sizeof(expected_registers));
+
+	test_free(cpu);
+}
+
+static void test_executes_next_instruction_when_vx_eq_vy(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	const char expected_registers[16] = {
+		0x00, 0x66, 0x12, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+	};
+
+	cpu->registers[1] = 0x12;
+	cpu->registers[2] = 0x12;
+
+	cpu->memory[cpu->PC] = 0x91;
+	cpu->memory[cpu->PC + 1] = 0x20;
+
+	cpu->memory[cpu->PC + 2] = 0x61;
+	cpu->memory[cpu->PC + 3] = 0x66;
+
+	cpu->memory[cpu->PC + 4] = 0x62;
+	cpu->memory[cpu->PC + 5] = 0x13;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(expected_registers, cpu->registers, 
+		sizeof(expected_registers));
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -360,7 +429,9 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_skips_one_instruction_when_cx_equals_nn),
 		cmocka_unit_test(test_executes_next_instruction_when_cx_not_equal_to_nn),
 		cmocka_unit_test(test_skips_one_instruction_when_cx_not_equal_to_nn),
-		cmocka_unit_test(test_executes_next_instruction_when_cx_equal_to_nn)
+		cmocka_unit_test(test_executes_next_instruction_when_cx_equal_to_nn),
+		cmocka_unit_test(test_skips_one_instruction_when_vx_not_eq_to_vy),
+		cmocka_unit_test(test_executes_next_instruction_when_vx_eq_vy)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

@@ -81,7 +81,18 @@ void add_to_vx(Cpu *cpu) {
 void handle_8(Cpu *cpu) {}
 
 // 9XY0
-void vx_not_equals_vy(Cpu *cpu) {}
+void vx_not_equals_vy(Cpu *cpu) {
+	unsigned short x_reg_num = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short y_reg_num = (cpu->opcode & 0x00f0) >> 4;
+
+	// Last part of opcode should be checked as if the value is different
+	// than 0 the opcode is an unsupported one. 
+
+	if (cpu->registers[x_reg_num] != cpu->registers[y_reg_num]) {
+		cpu->PC += 2;
+	}
+	cpu->PC += 2;
+}
 
 // ANNN
 void set_prog_counter(Cpu *cpu) {}
