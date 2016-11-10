@@ -428,6 +428,22 @@ static void test_ANNN_sets_I_to_NNN(void **state) {
 	test_free(cpu);
 }
 
+static void test_ANNN_increases_PC(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	unsigned short initial_pc = cpu->PC;
+	cpu->memory[cpu->PC] = 0xA1;
+	cpu->memory[cpu->PC + 1] = 0x23;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->PC == initial_pc + 2);
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
