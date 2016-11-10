@@ -1,7 +1,22 @@
 #include "opcodes.h"
 
 // 00EX
-void handle_0(Cpu *cpu) {}
+void handle_0(Cpu *cpu) {
+	unsigned short opcode_arg = cpu->opcode & 0x0fff;
+	switch (opcode_arg) {
+		case 0x0E0:
+			// clean screen
+			break;
+		case 0x0EE:
+			cpu->sp -= 1;
+			cpu->PC = cpu->stack[cpu->sp];
+			break;
+		default:
+			// Call program at address NNN
+			break;
+	}
+	cpu->PC += 2;
+}
 
 // 00E0
 void clear_screen(Cpu *cpu) {}
