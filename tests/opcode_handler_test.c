@@ -423,6 +423,8 @@ static void test_ANNN_sets_I_to_NNN(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
+	assert_true(cpu->I == 0x0123);
+
 	test_free(cpu);
 }
 

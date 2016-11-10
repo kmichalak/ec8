@@ -95,7 +95,9 @@ void vx_not_equals_vy(Cpu *cpu) {
 }
 
 // ANNN
-void set_prog_counter(Cpu *cpu) {}
+void set_prog_counter(Cpu *cpu) {
+	cpu->I = cpu->opcode & 0x0fff;
+}
 
 // BNNN
 void offset_jump(Cpu *cpu) {}
