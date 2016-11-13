@@ -558,13 +558,49 @@ static void test_8XY4_sets_vx_to_vx_plus_vy(void **state) {
 	cpu->memory[cpu->PC] = 0x81;
 	cpu->memory[cpu->PC+1] = 0x24;
 
+	cpu->registers[0x1] = 0x08;
+	cpu->registers[0x2] = 0x07;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[0x01] == 0x08 + 0x07);
+
+	test_free(cpu);
+}
+
+static void test_8XY4_sets_carry_flag_in_vf(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x81;
+	cpu->memory[cpu->PC+1] = 0x24;
+
 	cpu->registers[0x1] = 0x12;
 	cpu->registers[0x2] = 0xf0;
 
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->registers[0x01] == ((0x12 + 0xf0) & 0xff));
+	assert_true(cpu->registers[0xf] == 1);
+
+	test_free(cpu);
+}
+
+static void test_8XY4_does_not_set_carry_flag(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x81;
+	cpu->memory[cpu->PC+1] = 0x24;
+
+	cpu->registers[0x1] = 0x12;
+	cpu->registers[0x2] = 0x45;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[0xf] == 0);
 
 	test_free(cpu);
 }
@@ -596,7 +632,9 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_8XY1_sets_vx_to_vx_or_vy),
 		cmocka_unit_test(test_8XY2_sets_vx_to_vx_and_vy),
 		cmocka_unit_test(test_8XY2_sets_vx_to_vx_xor_vy),
-		cmocka_unit_test(test_8XY4_sets_vx_to_vx_plus_vy)
+		cmocka_unit_test(test_8XY4_sets_vx_to_vx_plus_vy),
+		cmocka_unit_test(test_8XY4_sets_carry_flag_in_vf),
+		cmocka_unit_test(test_8XY4_does_not_set_carry_flag)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
