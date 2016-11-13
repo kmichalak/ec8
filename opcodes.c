@@ -79,7 +79,19 @@ void add_to_vx(Cpu *cpu) {
 }
 
 // 8XYN
-void handle_8(Cpu *cpu) {}
+void handle_8(Cpu *cpu) {
+	unsigned short op_type = cpu->opcode & 0x000f;
+	switch (op_type) {
+		case 0: {
+			unsigned short src_reg = (cpu->opcode & 0x0f00) >> 8;
+			unsigned short dest_reg = (cpu->opcode & 0x00f0) >> 4;
+			cpu->registers[dest_reg] = cpu->registers[src_reg];
+			break;
+		}
+		default:
+			break;
+	}
+}
 
 // 9XY0
 void vx_not_equals_vy(Cpu *cpu) {

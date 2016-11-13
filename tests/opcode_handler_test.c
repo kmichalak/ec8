@@ -479,6 +479,24 @@ static void test_CXNN_sets_vx_to_NN_with_random_mask(void **state) {
 	test_free(cpu);	
 }
 
+static void test_8XY0_stores_vy_to_vx(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x81;
+	cpu->memory[cpu->PC+1] = 0x20;
+	
+	cpu->registers[0x1] = 0x088;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[0x01] == 0x088);
+	assert_true(cpu->registers[0x02] == 0x088);
+
+	test_free(cpu);		
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -501,7 +519,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_ANNN_sets_I_to_NNN),
 		cmocka_unit_test(test_ANNN_increases_PC),
 		cmocka_unit_test(test_BNNN_jumps_to_address_NNN_with_vx_offset),
-		cmocka_unit_test(test_CXNN_sets_vx_to_NN_with_random_mask)
+		cmocka_unit_test(test_CXNN_sets_vx_to_NN_with_random_mask),
+		cmocka_unit_test(test_8XY0_stores_vy_to_vx)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
