@@ -94,6 +94,11 @@ void handle_8(Cpu *cpu) {
 			cpu->registers[x_reg] = val;
 			break;
 		}
+		case 2: {
+			unsigned char val = cpu->registers[x_reg] & cpu->registers[y_reg];
+			cpu->registers[x_reg] = val;
+			break;
+		}
 		default:
 			break;
 	}
