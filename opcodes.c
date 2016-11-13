@@ -102,6 +102,12 @@ void handle_8(Cpu *cpu) {
 		case 3: {
 			unsigned char val = cpu->registers[x_reg] ^ cpu->registers[y_reg];
 			cpu->registers[x_reg] = val;
+			break;
+		}
+		case 4: {
+			unsigned short val = cpu->registers[x_reg] + cpu->registers[y_reg];
+			cpu->registers[x_reg] = val & 0xff;
+			break;
 		}
 		default:
 			break;
