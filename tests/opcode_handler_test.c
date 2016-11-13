@@ -83,9 +83,9 @@ static void test_set_vx_can_write_to_all_registers(void **state) {
 		cpu->handle_opcode(cpu);
 	}
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 						sizeof(expected_registers));
-	
+
 	test_free(cpu);
 }
 
@@ -111,7 +111,7 @@ static void test_add_to_vx_can_add_to_all_registers(void **state) {
 		cpu->handle_opcode(cpu);
 	}
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 						sizeof(expected_registers));
 
 	test_free(cpu);
@@ -123,7 +123,7 @@ static void test_jump_sets_program_counter_to_address(void **state)  {
 	initialize(cpu);
 	cpu->memory[cpu->PC] = 0x1A;
 	cpu->memory[cpu->PC+1] = 0xBC;
-	
+
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
@@ -240,7 +240,7 @@ static void test_skips_one_instruction_when_cx_equals_nn(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
 	test_free(cpu);
@@ -272,7 +272,7 @@ static void test_executes_next_instruction_when_cx_not_equal_to_nn(void **state)
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
 	test_free(cpu);
@@ -304,7 +304,7 @@ static void test_skips_one_instruction_when_cx_not_equal_to_nn(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
 	test_free(cpu);
@@ -338,7 +338,7 @@ static void test_executes_next_instruction_when_cx_equal_to_nn(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
 	test_free(cpu);
@@ -372,7 +372,7 @@ static void test_skips_one_instruction_when_vx_not_eq_to_vy(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
 	test_free(cpu);
@@ -407,7 +407,7 @@ static void test_executes_next_instruction_when_vx_eq_vy(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_memory_equal(expected_registers, cpu->registers, 
+	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
 	test_free(cpu);
@@ -450,7 +450,7 @@ static void test_BNNN_jumps_to_address_NNN_with_vx_offset(void **state) {
 
 	cpu->memory[cpu->PC] = 0xB7;
 	cpu->memory[cpu->PC+1] = 0xBC;
-	
+
 	cpu->registers[0x0] = 0x011;
 
 	cpu->fetch_opcode(cpu);
@@ -458,7 +458,7 @@ static void test_BNNN_jumps_to_address_NNN_with_vx_offset(void **state) {
 
 	assert_true(cpu->PC == 0x07CD);
 
-	test_free(cpu);	
+	test_free(cpu);
 }
 
 static void test_CXNN_sets_vx_to_NN_with_random_mask(void **state) {
@@ -467,7 +467,7 @@ static void test_CXNN_sets_vx_to_NN_with_random_mask(void **state) {
 
 	cpu->memory[cpu->PC] = 0xCA;
 	cpu->memory[cpu->PC+1] = 0xBC;
-	
+
 	cpu->registers[0x0] = 0x011;
 
 	cpu->fetch_opcode(cpu);
@@ -476,7 +476,7 @@ static void test_CXNN_sets_vx_to_NN_with_random_mask(void **state) {
 	assert_true(cpu->registers[0x0A] != 0);
 	assert_true(cpu->registers[0x0A] != 0x00BC);
 
-	test_free(cpu);	
+	test_free(cpu);
 }
 
 static void test_8XY0_stores_vy_to_vx(void **state) {
@@ -485,8 +485,8 @@ static void test_8XY0_stores_vy_to_vx(void **state) {
 
 	cpu->memory[cpu->PC] = 0x81;
 	cpu->memory[cpu->PC+1] = 0x20;
-	
-	cpu->registers[0x1] = 0x088;
+
+	cpu->registers[0x2] = 0x088;
 
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
@@ -494,7 +494,25 @@ static void test_8XY0_stores_vy_to_vx(void **state) {
 	assert_true(cpu->registers[0x01] == 0x088);
 	assert_true(cpu->registers[0x02] == 0x088);
 
-	test_free(cpu);		
+	test_free(cpu);
+}
+
+static void test_8XY1_sets_vx_to_vx_and_vy(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x81;
+	cpu->memory[cpu->PC+1] = 0x21;
+
+	cpu->registers[0x1] = 0x12;
+	cpu->registers[0x2] = 0xf0;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[0x01] == (0x12 | 0xf0));
+
+	test_free(cpu);
 }
 
 int main(int argc, char **argv) {
@@ -520,7 +538,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_ANNN_increases_PC),
 		cmocka_unit_test(test_BNNN_jumps_to_address_NNN_with_vx_offset),
 		cmocka_unit_test(test_CXNN_sets_vx_to_NN_with_random_mask),
-		cmocka_unit_test(test_8XY0_stores_vy_to_vx)
+		cmocka_unit_test(test_8XY0_stores_vy_to_vx),
+		cmocka_unit_test(test_8XY1_sets_vx_to_vx_and_vy)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

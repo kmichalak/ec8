@@ -81,11 +81,17 @@ void add_to_vx(Cpu *cpu) {
 // 8XYN
 void handle_8(Cpu *cpu) {
 	unsigned short op_type = cpu->opcode & 0x000f;
+	unsigned short x_reg = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short y_reg = (cpu->opcode & 0x00f0) >> 4;
+
 	switch (op_type) {
 		case 0: {
-			unsigned short src_reg = (cpu->opcode & 0x0f00) >> 8;
-			unsigned short dest_reg = (cpu->opcode & 0x00f0) >> 4;
-			cpu->registers[dest_reg] = cpu->registers[src_reg];
+			cpu->registers[x_reg] = cpu->registers[y_reg];
+			break;
+		}
+		case 1: {
+			unsigned char val = cpu->registers[x_reg] | cpu->registers[y_reg];
+			cpu->registers[x_reg] = val;
 			break;
 		}
 		default:
@@ -99,7 +105,7 @@ void vx_not_equals_vy(Cpu *cpu) {
 	unsigned short y_reg_num = (cpu->opcode & 0x00f0) >> 4;
 
 	// Last part of opcode should be checked as if the value is different
-	// than 0 the opcode is an unsupported one. 
+	// than 0 the opcode is an unsupported one.
 
 	if (cpu->registers[x_reg_num] != cpu->registers[y_reg_num]) {
 		cpu->PC += 2;
