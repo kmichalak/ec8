@@ -246,7 +246,7 @@ static void test_skips_one_instruction_when_cx_equals_nn(void **state) {
 	test_free(cpu);
 }
 
-static void test_executes_next_instruction_when_cx_not_equal_to_nn(void **state) {
+static void test_run_next_instruction_when_cx_not_equal_to_nn(void **state) {
 	Cpu *cpu = test_malloc(sizeof(Cpu));
 	initialize(cpu);
 
@@ -725,7 +725,7 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_call_subroutine_sets_program_counter),
 		cmocka_unit_test(test_calls_subroutine),
 		cmocka_unit_test(test_skips_one_instruction_when_cx_equals_nn),
-		cmocka_unit_test(test_executes_next_instruction_when_cx_not_equal_to_nn),
+		cmocka_unit_test(test_run_next_instruction_when_cx_not_equal_to_nn),
 		cmocka_unit_test(test_skips_one_instruction_when_cx_not_equal_to_nn),
 		cmocka_unit_test(test_executes_next_instruction_when_cx_equal_to_nn),
 		cmocka_unit_test(test_skips_one_instruction_when_vx_not_eq_to_vy),
