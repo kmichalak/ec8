@@ -120,6 +120,7 @@ void handle_8(Cpu *cpu) {
 			unsigned short lsb = cpu->registers[x_reg] & 0x1;
 			cpu->registers[x_reg] = cpu->registers[x_reg] >> 1;
 			cpu->registers[0xf] = lsb;
+			break;
 		}
 		default:
 			break;
