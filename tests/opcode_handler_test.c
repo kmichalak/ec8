@@ -623,6 +623,43 @@ static void test_8XY5_sets_vx_to_vx_sub_vy(void **state) {
 	test_free(cpu);
 }
 
+static void test_8XY5_sets_sets_borrow_flag_when_vx_gt_vy(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x81;
+	cpu->memory[cpu->PC + 1] = 0x25;
+
+	cpu->registers[0x1] = 0x45;
+	cpu->registers[0x2] = 0x12;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[0xf] == 0x1);
+
+	test_free(cpu);
+}
+
+
+static void test_8XY5_clears_borrow_flag_when_no_borrow(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x81;
+	cpu->memory[cpu->PC + 1] = 0x25;
+
+	cpu->registers[0x1] = 0x12;
+	cpu->registers[0x2] = 0x45;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[0xf] == 0x0);
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -653,7 +690,9 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_8XY4_sets_vx_to_vx_plus_vy),
 		cmocka_unit_test(test_8XY4_sets_carry_flag_in_vf),
 		cmocka_unit_test(test_8XY4_does_not_set_carry_flag),
-		cmocka_unit_test(test_8XY5_sets_vx_to_vx_sub_vy)
+		cmocka_unit_test(test_8XY5_sets_vx_to_vx_sub_vy),
+		cmocka_unit_test(test_8XY5_sets_sets_borrow_flag_when_vx_gt_vy),
+		cmocka_unit_test(test_8XY5_clears_borrow_flag_when_no_borrow)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
