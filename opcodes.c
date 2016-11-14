@@ -110,6 +110,11 @@ void handle_8(Cpu *cpu) {
 			cpu->registers[0xf] = (val & 0xff00) > 0;
 			break;
 		}
+		case 5: {
+			unsigned short val = cpu->registers[x_reg] - cpu->registers[y_reg];
+			cpu->registers[x_reg] = val & 0xff;
+
+		}
 		default:
 			break;
 	}
