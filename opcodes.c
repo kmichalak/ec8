@@ -114,6 +114,12 @@ void handle_8(Cpu *cpu) {
 			cpu->registers[0xf] = cpu->registers[x_reg] > cpu->registers[y_reg];
 			short val = cpu->registers[x_reg] - cpu->registers[y_reg];
 			cpu->registers[x_reg] = val & 0xff;
+			break;
+		}
+		case 6: {
+			unsigned short lsb = cpu->registers[x_reg] & 0x1;
+			cpu->registers[x_reg] = cpu->registers[x_reg] >> 1;
+			cpu->registers[0xf] = lsb;
 		}
 		default:
 			break;
