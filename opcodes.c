@@ -123,8 +123,10 @@ void handle_8(Cpu *cpu) {
 			break;
 		}
 		case 7: {
+			cpu->registers[0xf] = cpu->registers[x_reg] < cpu->registers[y_reg];
 			short val = cpu->registers[y_reg] - cpu->registers[x_reg];
 			cpu->registers[x_reg] = val;
+			break;
 		}
 		default:
 			break;
