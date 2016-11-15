@@ -122,6 +122,10 @@ void handle_8(Cpu *cpu) {
 			cpu->registers[0xf] = lsb;
 			break;
 		}
+		case 7: {
+			short val = cpu->registers[y_reg] - cpu->registers[x_reg];
+			cpu->registers[x_reg] = val;
+		}
 		default:
 			break;
 	}
