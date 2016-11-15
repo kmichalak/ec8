@@ -129,7 +129,9 @@ void handle_8(Cpu *cpu) {
 			break;
 		}
 		case 0xe: {
+			unsigned short msb = (cpu->registers[x_reg] & 0x80) >> 7;
 			cpu->registers[x_reg] = cpu->registers[x_reg] << 1;
+			cpu->registers[0xf] = msb;
 			break;
 		}
 		default:
