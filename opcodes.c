@@ -128,6 +128,10 @@ void handle_8(Cpu *cpu) {
 			cpu->registers[x_reg] = val;
 			break;
 		}
+		case 0xe: {
+			cpu->registers[x_reg] = cpu->registers[x_reg] << 1;
+			break;
+		}
 		default:
 			break;
 	}
