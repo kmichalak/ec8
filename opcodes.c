@@ -79,7 +79,65 @@ void add_to_vx(Cpu *cpu) {
 }
 
 // 8XYN
-void handle_8(Cpu *cpu) {}
+void handle_8(Cpu *cpu) {
+	unsigned short op_type = cpu->opcode & 0x000f;
+	unsigned short x_reg = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short y_reg = (cpu->opcode & 0x00f0) >> 4;
+
+	switch (op_type) {
+		case 0: {
+			cpu->registers[x_reg] = cpu->registers[y_reg];
+			break;
+		}
+		case 1: {
+			unsigned char val = cpu->registers[x_reg] | cpu->registers[y_reg];
+			cpu->registers[x_reg] = val;
+			break;
+		}
+		case 2: {
+			unsigned char val = cpu->registers[x_reg] & cpu->registers[y_reg];
+			cpu->registers[x_reg] = val;
+			break;
+		}
+		case 3: {
+			unsigned char val = cpu->registers[x_reg] ^ cpu->registers[y_reg];
+			cpu->registers[x_reg] = val;
+			break;
+		}
+		case 4: {
+			unsigned short val = cpu->registers[x_reg] + cpu->registers[y_reg];
+			cpu->registers[x_reg] = val & 0xff;
+			cpu->registers[0xf] = (val & 0xff00) > 0;
+			break;
+		}
+		case 5: {
+			cpu->registers[0xf] = cpu->registers[x_reg] > cpu->registers[y_reg];
+			short val = cpu->registers[x_reg] - cpu->registers[y_reg];
+			cpu->registers[x_reg] = val & 0xff;
+			break;
+		}
+		case 6: {
+			unsigned short lsb = cpu->registers[x_reg] & 0x1;
+			cpu->registers[x_reg] = cpu->registers[x_reg] >> 1;
+			cpu->registers[0xf] = lsb;
+			break;
+		}
+		case 7: {
+			cpu->registers[0xf] = cpu->registers[x_reg] < cpu->registers[y_reg];
+			short val = cpu->registers[y_reg] - cpu->registers[x_reg];
+			cpu->registers[x_reg] = val;
+			break;
+		}
+		case 0xe: {
+			unsigned short msb = (cpu->registers[x_reg] & 0x80) >> 7;
+			cpu->registers[x_reg] = cpu->registers[x_reg] << 1;
+			cpu->registers[0xf] = msb;
+			break;
+		}
+		default:
+			break;
+	}
+}
 
 // 9XY0
 void vx_not_equals_vy(Cpu *cpu) {
@@ -87,7 +145,7 @@ void vx_not_equals_vy(Cpu *cpu) {
 	unsigned short y_reg_num = (cpu->opcode & 0x00f0) >> 4;
 
 	// Last part of opcode should be checked as if the value is different
-	// than 0 the opcode is an unsupported one. 
+	// than 0 the opcode is an unsupported one.
 
 	if (cpu->registers[x_reg_num] != cpu->registers[y_reg_num]) {
 		cpu->PC += 2;
