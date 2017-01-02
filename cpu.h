@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include "display.h"
 
 typedef struct Cpu Cpu;
 
@@ -19,9 +20,12 @@ struct Cpu {
 	// int (*run_cycle)(Cpu *cpu);
 	void (*fetch_opcode)(Cpu *cpu);
 	void (*handle_opcode)(Cpu *cpu);
+
+	Display *display;
 };
 
 void initialize(Cpu *cpu);
 
+void shutdown(Cpu *cpu);
 
 #endif

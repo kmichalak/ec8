@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h> // just for memcpy
 #include "opcodes.h"
 
 // 00EX
@@ -173,7 +174,31 @@ void random_vx(Cpu *cpu) {
 }
 
 // DXYN
-void draw(Cpu *cpu) {}
+void draw(Cpu *cpu) {
+	unsigned short xpos_reg = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short ypos_reg = (cpu->opcode & 0x00f0) >> 4;
+	unsigned short bytes_num = (cpu->opcode & 0x000f);
+
+	unsigned char xpos = cpu->registers[xpos_reg];
+	unsigned char ypos = cpu->registers[ypos_reg];
+
+	unsigned char *sprite = calloc(16, sizeof(unsigned char));
+
+	for (int i=0; i< bytes_num; i++) {
+		sprite[i] = cpu->memory[cpu->I + i];
+	}
+
+	// memcpy(sprite, &(cpu->memory[cpu->I]), bytes_num * sizeof(unsigned char));
+
+	// memcpy(&sprite, cpu->memory[cpu->I], bytes_num * sizeof(unsigned char));
+
+	cpu->display->put_pixels(cpu->display, sprite, bytes_num, xpos, ypos);
+
+	// for (unsigned short s = cpu->I; s < bytes_num; s++) {
+	// 	cpu->display->put_pixels(cpu->display, cpu->memory[s], xpos, ypos);
+	// }
+
+}
 
 // EXNN
 void handle_key(Cpu *cpu) {}

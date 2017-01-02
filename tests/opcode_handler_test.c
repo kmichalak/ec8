@@ -19,6 +19,7 @@ static void test_increments_pc_after_opcode_handle(void **state) {
 
 	assert_true(cpu->PC == 2);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -38,6 +39,7 @@ static void test_return_decrements_stack_pointer(void **state) {
 
 	assert_true(cpu->sp == 0);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -59,6 +61,7 @@ static void test_return_pops_stack_to_pc_and_increments_ps(void **state) {
 
 	assert_true(cpu->PC == initial_pc + 2);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -86,6 +89,7 @@ static void test_set_vx_can_write_to_all_registers(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 						sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -114,6 +118,7 @@ static void test_add_to_vx_can_add_to_all_registers(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 						sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -129,6 +134,7 @@ static void test_jump_sets_program_counter_to_address(void **state)  {
 
 	assert_true(cpu->PC == 0x0ABC);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -148,6 +154,7 @@ static void test_call_subroutine_increments_stack_pointer(void **state) {
 
 	assert_true(cpu->sp == 1);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -169,6 +176,7 @@ static void test_call_subroutine_puts_current_address_in_stack(void **state) {
 
 	assert_true(cpu->stack[cpu->sp - 1] == initial_pc);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -189,6 +197,7 @@ static void test_call_subroutine_sets_program_counter(void **state) {
 
 	assert_true(cpu->PC == 0x0AAA + 0x02);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -209,6 +218,7 @@ static void test_calls_subroutine(void **state) {
 
 	assert_true(cpu->registers[0x01] == 0xEE);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -243,6 +253,7 @@ static void test_skips_one_instruction_when_cx_equals_nn(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -275,6 +286,7 @@ static void test_run_next_instruction_when_cx_not_equal_to_nn(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -307,6 +319,7 @@ static void test_skips_one_instruction_when_cx_not_equal_to_nn(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -341,6 +354,7 @@ static void test_executes_next_instruction_when_cx_equal_to_nn(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -375,6 +389,7 @@ static void test_skips_one_instruction_when_vx_not_eq_to_vy(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -410,6 +425,7 @@ static void test_executes_next_instruction_when_vx_eq_vy(void **state) {
 	assert_memory_equal(expected_registers, cpu->registers,
 		sizeof(expected_registers));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -425,6 +441,7 @@ static void test_ANNN_sets_I_to_NNN(void **state) {
 
 	assert_true(cpu->I == 0x0123);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -441,6 +458,7 @@ static void test_ANNN_increases_PC(void **state) {
 
 	assert_true(cpu->PC == initial_pc + 2);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -458,6 +476,7 @@ static void test_BNNN_jumps_to_address_NNN_with_vx_offset(void **state) {
 
 	assert_true(cpu->PC == 0x07CD);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -476,6 +495,7 @@ static void test_CXNN_sets_vx_to_NN_with_random_mask(void **state) {
 	assert_true(cpu->registers[0x0A] != 0);
 	assert_true(cpu->registers[0x0A] != 0x00BC);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -494,6 +514,7 @@ static void test_8XY0_stores_vy_to_vx(void **state) {
 	assert_true(cpu->registers[0x01] == 0x088);
 	assert_true(cpu->registers[0x02] == 0x088);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -512,6 +533,7 @@ static void test_8XY1_sets_vx_to_vx_or_vy(void **state) {
 
 	assert_true(cpu->registers[0x01] == (0x12 | 0xf0));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -530,6 +552,7 @@ static void test_8XY2_sets_vx_to_vx_and_vy(void **state) {
 
 	assert_true(cpu->registers[0x01] == (0x12 & 0xf0));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -548,6 +571,7 @@ static void test_8XY2_sets_vx_to_vx_xor_vy(void **state) {
 
 	assert_true(cpu->registers[0x01] == (0x12 ^ 0xf0));
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -566,6 +590,7 @@ static void test_8XY4_sets_vx_to_vx_plus_vy(void **state) {
 
 	assert_true(cpu->registers[0x01] == 0x08 + 0x07);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -584,6 +609,7 @@ static void test_8XY4_sets_carry_flag_in_vf(void **state) {
 
 	assert_true(cpu->registers[0xf] == 1);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -602,6 +628,7 @@ static void test_8XY4_does_not_set_carry_flag(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -620,6 +647,7 @@ static void test_8XY5_sets_vx_to_vx_sub_vy(void **state) {
 
 	assert_true(cpu->registers[0x1] == 0x45 - 0x12);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -638,6 +666,7 @@ static void test_8XY5_sets_sets_borrow_flag_when_vx_gt_vy(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x1);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -657,6 +686,7 @@ static void test_8XY5_clears_borrow_flag_when_no_borrow(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x0);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -674,6 +704,7 @@ static void test_8xy6_shifts_vx_by_one(void **state) {
 
 	assert_true(cpu->registers[0x1] == 0x4);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -691,6 +722,7 @@ static void test_8xy6_sets_vf_when_lsb_is_one(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x1);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -708,6 +740,7 @@ static void test_8xy6_clears_vf_when_lsb_is_zero(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x0);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -726,6 +759,7 @@ static void test_8xy7_sets_vx_to_vy_sub_vx(void **state) {
 
 	assert_true(cpu->registers[0x01] == 0x45 - 0x12);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -744,6 +778,7 @@ static void test_8xy7_sets_vf_when_no_borrow(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x1);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -762,6 +797,7 @@ static void test_8xy7_clears_vf_when_borrow(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x0);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -779,6 +815,7 @@ static void test_8xyE_shifts_vx_left_by_one(void **state) {
 
 	assert_true(cpu->registers[0x1] == 0x8);
 
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -796,6 +833,31 @@ static void test_8xyE_stores_msb_in_vf(void **state) {
 
 	assert_true(cpu->registers[0xf] == 0x1);
 
+	shutdown(cpu);
+	test_free(cpu);
+}
+
+static void test_display_bytes(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xD3;
+	cpu->memory[cpu->PC + 1] = 0x72;
+
+	cpu->I = cpu->PC + 10;
+
+	cpu->memory[cpu->I] = 0xAA;
+	cpu->memory[cpu->I+1] = 0x55;
+
+	cpu->registers[0x3] = 0x0;
+	cpu->registers[0x7] = 0x4;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->display->screen[4] == 0xAA55000000000000);
+
+	shutdown(cpu);
 	test_free(cpu);
 }
 
@@ -839,7 +901,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_8xy7_sets_vf_when_no_borrow),
 		cmocka_unit_test(test_8xy7_clears_vf_when_borrow),
 		cmocka_unit_test(test_8xyE_shifts_vx_left_by_one),
-		cmocka_unit_test(test_8xyE_stores_msb_in_vf)
+		cmocka_unit_test(test_8xyE_stores_msb_in_vf),
+		cmocka_unit_test(test_display_bytes)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

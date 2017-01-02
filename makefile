@@ -1,11 +1,12 @@
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -ggdb -Wall
 
 TARGET = ck8
 MAIN = ck8
 OPCODES = opcodes
 CPU = cpu
-ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o
+DISPLAY = display
+ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(DISPLAY).o $(CPU).o $(DISPLAY).o
 
 all: $(TARGET)
 
@@ -22,8 +23,13 @@ $(OPCODES).o: $(OPCODES).c $(OPCODES).h $(CPU).h
 	$(CC) $(CFLAGS) -c $(OPCODES).c
 
 
-$(CPU).o: $(CPU).c $(CPU).h
+$(CPU).o: $(CPU).c $(CPU).h $(DISPLAY).h
 	$(CC) $(CFLAGS) -c $(CPU).c
+
+
+$(DISPLAY).o: $(DISPLAY).c $(DISPLAY).h
+	$(CC) $(CFLAGS) -c $(DISPLAY).c
+
 
 test: 
 	$(MAKE) -C tests
