@@ -9,7 +9,7 @@ INCLUDEDIR = ../
 CPU = cpu
 OPCODES = opcodes
 DISPLAY = display
-ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(DISPLAY).o $(CPU).o $(DISPLAY).o
+ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o
 
 all: $(TARGET)
 

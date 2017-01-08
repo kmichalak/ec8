@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <stdbool.h>
+
 #include "cpu.h"
-#include "opcodes.h"
 #include "display.h"
+#include "opcodes.h"
 
 opcode_handler ops_handlers[16];
 
@@ -22,17 +24,6 @@ static void handle_opcode(Cpu *cpu) {
 	handler(cpu);
 }
 
-static void put_pixels(Display *display, unsigned char *sprite, unsigned short sprite_size, unsigned char x, unsigned char y) {
-	uint64_t line;
-
-	for (int i=0; i<sprite_size; i++) {
-		line = (line << 8) | sprite[i];
-	}
-
-	line = line << (64 - sprite_size * 8 - x);
-	display->screen[y] = display->screen[y] ^ line;
-}
-
 void initialize(Cpu *cpu) {
 	cpu->PC = 0;
 	cpu->I = 0;
@@ -45,7 +36,7 @@ void initialize(Cpu *cpu) {
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;
-	cpu->display->put_pixels = put_pixels;
+	init_display(cpu->display);
 	
 	ops_handlers[0x0] = handle_0;
 	ops_handlers[0x1] = jump;

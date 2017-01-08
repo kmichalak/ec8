@@ -861,6 +861,29 @@ static void test_display_bytes(void **state) {
 	test_free(cpu);
 }
 
+static void test_collision_is_detected(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xD3;
+	cpu->memory[cpu->PC + 1] = 0x41;
+
+	cpu->I = cpu->PC + 10;
+
+	cpu->memory[cpu->I] = 0b00111000;
+	cpu->display->screen[0] = 0x1000000000000000;
+
+	cpu->registers[0x3] = 0;
+	cpu->registers[0x4] = 0;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	printf("%d\n", cpu->registers[0xf]);
+	assert_true(cpu->registers[0xf] == 1);
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -902,7 +925,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_8xy7_clears_vf_when_borrow),
 		cmocka_unit_test(test_8xyE_shifts_vx_left_by_one),
 		cmocka_unit_test(test_8xyE_stores_msb_in_vf),
-		cmocka_unit_test(test_display_bytes)
+		cmocka_unit_test(test_display_bytes),
+		cmocka_unit_test(test_collision_is_detected)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

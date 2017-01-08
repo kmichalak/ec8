@@ -6,7 +6,7 @@ MAIN = ck8
 OPCODES = opcodes
 CPU = cpu
 DISPLAY = display
-ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(DISPLAY).o $(CPU).o $(DISPLAY).o
+ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o
 
 all: $(TARGET)
 

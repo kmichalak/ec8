@@ -188,16 +188,8 @@ void draw(Cpu *cpu) {
 		sprite[i] = cpu->memory[cpu->I + i];
 	}
 
-	// memcpy(sprite, &(cpu->memory[cpu->I]), bytes_num * sizeof(unsigned char));
-
-	// memcpy(&sprite, cpu->memory[cpu->I], bytes_num * sizeof(unsigned char));
-
 	cpu->display->put_pixels(cpu->display, sprite, bytes_num, xpos, ypos);
-
-	// for (unsigned short s = cpu->I; s < bytes_num; s++) {
-	// 	cpu->display->put_pixels(cpu->display, cpu->memory[s], xpos, ypos);
-	// }
-
+	cpu->display->write_collision_state(cpu->display, &cpu->registers[0xf]);
 }
 
 // EXNN
