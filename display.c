@@ -12,8 +12,7 @@ static void put_pixels(Display *display, unsigned char *sprite, unsigned short s
 
 	int64_t collision_buff = display->screen[y] | line;
 
-	bool no_collision = buff == collision_buff;
-	display->collision_found = !no_collision;
+	display->collision_found = buff != collision_buff;
 
 	display->screen[y] = display->screen[y] ^ line;
 }

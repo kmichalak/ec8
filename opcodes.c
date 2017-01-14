@@ -1,13 +1,15 @@
 #include <stdlib.h>
-#include <string.h> // just for memcpy
+#include <string.h> // just for memcpy and memset
 #include "opcodes.h"
+
+#include <stdio.h>
 
 // 00EX
 void handle_0(Cpu *cpu) {
 	unsigned short opcode_arg = cpu->opcode & 0x0fff;
 	switch (opcode_arg) {
 		case 0x0E0:
-			// clean screen
+			clear_screen(cpu);
 			break;
 		case 0x0EE:
 			cpu->sp -= 1;
@@ -21,7 +23,9 @@ void handle_0(Cpu *cpu) {
 }
 
 // 00E0
-void clear_screen(Cpu *cpu) {}
+void clear_screen(Cpu *cpu) {
+	memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
+}
 
 // 00EE
 void return_from_rsubutine(Cpu *cpu) {}

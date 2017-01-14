@@ -4,6 +4,7 @@
 #include <cmocka.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../cpu.h"
 
@@ -879,8 +880,49 @@ static void test_collision_is_detected(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	printf("%d\n", cpu->registers[0xf]);
 	assert_true(cpu->registers[0xf] == 1);
+	test_free(cpu);
+}
+
+static void test_clear_screen(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0x00;
+	cpu->memory[cpu->PC + 1] = 0xe0;
+
+	init_display(cpu->display);
+	uint64_t initial_screen[32];
+	uint64_t expected_screen[32];
+	for (int i=0; i<32; i++) {
+		cpu->display->screen[i] = 0xffffffffffffffff;
+		expected_screen[i] = 0;
+	}
+	memcpy(&initial_screen, cpu->display->screen, sizeof(initial_screen));
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(cpu->display->screen, &expected_screen, sizeof(cpu->display->screen));
+
+	test_free(cpu);
+}
+
+static void test_clear_screen_increments_pc(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	unsigned short initial_pc = cpu->PC;
+
+	cpu->memory[cpu->PC] = 0x00;
+	cpu->memory[cpu->PC + 1] = 0xe0;
+
+	init_display(cpu->display);
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->PC == initial_pc + 2);
+
 	test_free(cpu);
 }
 
@@ -926,7 +968,9 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_8xyE_shifts_vx_left_by_one),
 		cmocka_unit_test(test_8xyE_stores_msb_in_vf),
 		cmocka_unit_test(test_display_bytes),
-		cmocka_unit_test(test_collision_is_detected)
+		cmocka_unit_test(test_collision_is_detected),
+		cmocka_unit_test(test_clear_screen_increments_pc),
+		cmocka_unit_test(test_clear_screen)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
