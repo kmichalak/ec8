@@ -13,8 +13,7 @@ void handle_0(Cpu *cpu) {
 			cpu->PC += 2;
 			break;
 		case 0x0EE:
-			cpu->PC = cpu->stack[cpu->sp];
-			cpu->sp -= 1;
+			return_from_rsubutine(cpu);
 			break;
 		default:
 			// Call program at address NNN
@@ -28,7 +27,10 @@ void clear_screen(Cpu *cpu) {
 }
 
 // 00EE
-void return_from_rsubutine(Cpu *cpu) {}
+void return_from_rsubutine(Cpu *cpu) {
+	cpu->PC = cpu->stack[cpu->sp];
+	cpu->sp -= 1;
+}
 
 // 1NNN
 void jump(Cpu *cpu) {
