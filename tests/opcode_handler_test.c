@@ -927,6 +927,26 @@ static void test_clear_screen_increments_pc(void **state) {
 	test_free(cpu);
 }
 
+static void test_increments_pc_when_vx_equals_vy(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	unsigned short initial_pc = cpu->PC;
+
+	cpu->memory[cpu->PC] = 0x51;
+	cpu->memory[cpu->PC + 1] = 0x20;
+
+	cpu->registers[1] = 7;
+	cpu->registers[2] = 7;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->PC == initial_pc + 4);
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -971,7 +991,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_display_bytes),
 		cmocka_unit_test(test_collision_is_detected),
 		cmocka_unit_test(test_clear_screen_increments_pc),
-		cmocka_unit_test(test_clear_screen)
+		cmocka_unit_test(test_clear_screen),
+		cmocka_unit_test(test_increments_pc_when_vx_equals_vy)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

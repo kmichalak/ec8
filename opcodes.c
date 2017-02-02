@@ -69,7 +69,15 @@ void vx_not_equals(Cpu *cpu) {
 }
 
 // 5XY0
-void vx_equals_vy(Cpu *cpu) {}
+void vx_equals_vy(Cpu *cpu) {
+	unsigned short x_reg_num = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short y_reg_num = (cpu->opcode & 0x00f0) >> 4;
+
+	if (cpu->registers[x_reg_num] == cpu->registers[y_reg_num]) {
+		cpu->PC += 2;
+	}
+	cpu->PC += 2;
+}
 
 // 6XNN
 void set_vx(Cpu *cpu) {
