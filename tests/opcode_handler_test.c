@@ -28,8 +28,8 @@ static void test_return_decrements_stack_pointer(void **state) {
 	Cpu *cpu = test_malloc(sizeof(Cpu));
 	initialize(cpu);
 
-	cpu->stack[cpu->sp] = cpu->PC;
 	cpu->sp += 1;
+	cpu->stack[cpu->sp] = cpu->PC;
 
 	cpu->PC = 16;
 	cpu->memory[cpu->PC] = 0x00;
@@ -38,20 +38,21 @@ static void test_return_decrements_stack_pointer(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
+	// printf("%d == %d\n", cpu->sp, 0);
 	assert_true(cpu->sp == 0);
 
 	shutdown(cpu);
 	test_free(cpu);
 }
 
-static void test_return_pops_stack_to_pc_and_increments_ps(void **state) {
+static void test_return_pops_stack_to_pc(void **state) {
 	Cpu *cpu = test_malloc(sizeof(Cpu));
 	initialize(cpu);
 
 	unsigned short initial_pc = cpu->PC;
 
-	cpu->stack[cpu->sp] = cpu->PC;
 	cpu->sp += 1;
+	cpu->stack[cpu->sp] = cpu->PC;
 
 	cpu->PC = 16;
 	cpu->memory[cpu->PC] = 0x00;
@@ -60,7 +61,7 @@ static void test_return_pops_stack_to_pc_and_increments_ps(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->PC == initial_pc + 2);
+	assert_true(cpu->PC == initial_pc);
 
 	shutdown(cpu);
 	test_free(cpu);
@@ -931,7 +932,7 @@ int main(int argc, char **argv) {
 	const struct CMUnitTest tests[] = {
 		cmocka_unit_test(test_increments_pc_after_opcode_handle),
 		cmocka_unit_test(test_return_decrements_stack_pointer),
-		cmocka_unit_test(test_return_pops_stack_to_pc_and_increments_ps),
+		cmocka_unit_test(test_return_pops_stack_to_pc),
 		cmocka_unit_test(test_add_to_vx_can_add_to_all_registers),
 		cmocka_unit_test(test_set_vx_can_write_to_all_registers),
 		cmocka_unit_test(test_jump_sets_program_counter_to_address),

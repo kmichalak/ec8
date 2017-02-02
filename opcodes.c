@@ -10,16 +10,16 @@ void handle_0(Cpu *cpu) {
 	switch (opcode_arg) {
 		case 0x0E0:
 			clear_screen(cpu);
+			cpu->PC += 2;
 			break;
 		case 0x0EE:
-			cpu->sp -= 1;
 			cpu->PC = cpu->stack[cpu->sp];
+			cpu->sp -= 1;
 			break;
 		default:
 			// Call program at address NNN
 			break;
 	}
-	cpu->PC += 2;
 }
 
 // 00E0

@@ -33,6 +33,7 @@ void initialize(Cpu *cpu) {
 	memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
 	memset(cpu->memory, 0, sizeof(cpu->memory));
 	memset(cpu->registers, 0, sizeof(cpu->registers));
+	memset(cpu->stack, 0, sizeof(cpu->stack));
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;

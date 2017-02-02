@@ -14,7 +14,7 @@ struct Cpu {
 	unsigned short I;
 	unsigned short PC;
 	unsigned short stack[16];
-	unsigned short sp;
+	short sp;
 	unsigned char key[16];
 	// opcode_handler handlers[16];
 	// int (*run_cycle)(Cpu *cpu);
