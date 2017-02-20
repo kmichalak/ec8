@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -ggdb -Wall
+CFLAGS = -ggdb -Wall -I/usr/include
 TARGET = ck8-test
 MAIN = opcode_handler_test
-LIBS = -lcmocka
+LIBS = -lcmocka -lSDL2
 LIBDIR = /usr/local/lib
 INCLUDEDIR = ../ 
 

@@ -29,15 +29,17 @@ void initialize(Cpu *cpu) {
 	cpu->I = 0;
 	cpu->sp = 0;
 
-	cpu->display = malloc(sizeof(Display));
-	memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
 	memset(cpu->memory, 0, sizeof(cpu->memory));
 	memset(cpu->registers, 0, sizeof(cpu->registers));
 	memset(cpu->stack, 0, sizeof(cpu->stack));
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;
+	// cpu->display = NULL;
+	cpu->display = malloc(sizeof(Display));
 	init_display(cpu->display);
+
+
 	
 	ops_handlers[0x0] = handle_0;
 	ops_handlers[0x1] = jump;
@@ -57,6 +59,15 @@ void initialize(Cpu *cpu) {
 	ops_handlers[0xF] = handle_f;
 }
 
-void shutdown(Cpu *cpu) {
+void shutdown_cpu(Cpu *cpu) {
+	printf("Shutdown method called\n");
+	// if (cpu == 0) {
+	// 	printf("CPU is already destroyed\n");
+	// }
+	// if (cpu->display == 0) {
+	// 	printf("Display is already destroyed\n");
+	// } 
+
+	destroy_display(cpu->display);
 	free(cpu->display);
 }

@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <string.h> // just for memcpy and memset
+
+// #include <SDL2/SDL_events.h>
+
 #include "opcodes.h"
 
 #include <stdio.h>
@@ -207,8 +210,21 @@ void draw(Cpu *cpu) {
 }
 
 // EXNN
-void handle_key(Cpu *cpu) {}
+void handle_key(Cpu *cpu) {
+	// SDL_Event event;
+	// while (SDL_PollEvent(&event)) {
+
+	// 	uint8_t keyboard_state = SDL_GetKeyboardState(0);
+
+	// 	if (event.type == SDL_KEYDOWN) {
+	// 		SDL_Scancode keyIndex = event.key.keysym.scancode;
+	// 		// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
+	// 			printf("Got the key \n");
+	// 		// }
+	// 	}
+
+	// }
+}
 
 // FXNN
 void handle_f(Cpu *cpu) {}
-

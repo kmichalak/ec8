@@ -17,11 +17,14 @@ int main(int argc, char* argv[]) {
 	initialize(cpu);
 	// initialize(cpu);
 
-	while(1) {
+	// while(1) {
+
 		// run CPU cycle
 		// draw graphics if draw flag is set
 		// set keys
-	}
+	// }
+
+	shutdown_cpu(cpu);
 
 	return 0;
 };
