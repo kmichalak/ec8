@@ -1000,6 +1000,40 @@ static void test_loads_vx_into_dt(void **state) {
 	test_free(cpu);
 }
 
+static void test_loads_vx_into_st(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf4;
+	cpu->memory[cpu->PC + 1] = 0x18;
+
+	cpu->registers[4] = 77;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->st == 77);
+
+	test_free(cpu);	
+}
+
+static void test_adds_vx_to_i(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf5;
+	cpu->memory[cpu->PC + 1] = 0x1E;
+	cpu->I = 0x5;
+	cpu->registers[5] = 0x5;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->I == 0xA);
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -1048,7 +1082,9 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_increments_pc_when_vx_equals_vy),
 
 		cmocka_unit_test(test_loads_dt_into_vx),
-		cmocka_unit_test(test_loads_vx_into_dt)
+		cmocka_unit_test(test_loads_vx_into_dt),
+		cmocka_unit_test(test_loads_vx_into_st),
+		cmocka_unit_test(test_adds_vx_to_i)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
