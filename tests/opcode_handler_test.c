@@ -1054,6 +1054,30 @@ static void test_stores_bcd_value_of_vx(void **state) {
 	test_free(cpu);
 }
 
+static void test_stores_registers_in_memory(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf7;
+	cpu->memory[cpu->PC + 1] = 0x55;
+
+	cpu->registers[0] = 1;
+	cpu->registers[1] = 2;
+	cpu->registers[2] = 3;
+	cpu->registers[3] = 4;
+	cpu->registers[4] = 5;
+	cpu->registers[5] = 6;
+	cpu->registers[6] = 7;
+	cpu->registers[7] = 8;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(cpu->registers, cpu->memory + cpu->I, 7 * sizeof(unsigned char));
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -1105,7 +1129,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_loads_vx_into_dt),
 		cmocka_unit_test(test_loads_vx_into_st),
 		cmocka_unit_test(test_adds_vx_to_i),
-		cmocka_unit_test(test_stores_bcd_value_of_vx)
+		cmocka_unit_test(test_stores_bcd_value_of_vx),
+		cmocka_unit_test(test_stores_registers_in_memory)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);

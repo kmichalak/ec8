@@ -257,6 +257,8 @@ void handle_f(Cpu *cpu) {
 			}
 			break;
 		case 0x55:
+			memcpy(cpu->memory + cpu->I, cpu->registers, 
+				   reg_num * sizeof(unsigned char));
 			break;
 		case 0x65:
 			break;
