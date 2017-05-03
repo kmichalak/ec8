@@ -231,6 +231,7 @@ void handle_f(Cpu *cpu) {
 
 	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
 	unsigned short operation = (cpu->opcode & 0x00ff);
+	unsigned char value = cpu->registers[reg_num];
 
 	switch (operation) {
 		case 0x07:
@@ -239,17 +240,21 @@ void handle_f(Cpu *cpu) {
 		case 0x0A:
 			break;
 		case 0x15:
-			cpu->dt = cpu->registers[reg_num];
+			cpu->dt = value;
 			break;
 		case 0x18:
-			cpu->st = cpu->registers[reg_num];
+			cpu->st = value;
 			break;
 		case 0x1E:
-			cpu->I = cpu->I + cpu->registers[reg_num];
+			cpu->I = cpu->I + value;
 			break;
 		case 0x29:
 			break;
 		case 0x33:
+			for (int i=2; i >= 0; i--) {
+				cpu->memory[cpu->I + i] = value % 10;
+				value /= 10;
+			}
 			break;
 		case 0x55:
 			break;
