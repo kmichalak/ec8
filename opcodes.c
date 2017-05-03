@@ -239,6 +239,7 @@ void handle_f(Cpu *cpu) {
 		case 0x0A:
 			break;
 		case 0x15:
+			cpu->dt = cpu->registers[reg_num];
 			break;
 		case 0x18:
 			break;

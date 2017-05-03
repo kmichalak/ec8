@@ -965,6 +965,40 @@ static void test_loads_dt_into_vx(void **state) {
 	test_free(cpu);
 }
 
+// TODO: this test need to be finished before implementatio of instruction 
+// 		 is finished. 
+
+// static void test_stores_key_to_vx_after_key_pressed(void **state) {
+// 	Cpu *cpu = test_malloc(sizeof(Cpu));
+// 	initialize(cpu);
+
+// 	cpu->memory[cpu->PC] = 0xf2;
+// 	cpu->memory[cpu->PC + 1] = 0x0A;
+
+// 	cpu->fetch_opcode(cpu);
+// 	cpu->handle_opcode(cpu);
+
+// 	assert_true(cpu->registers[2] == '');
+
+// 	test_free(cpu);
+// }
+
+static void test_loads_vx_into_dt(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf3;
+	cpu->memory[cpu->PC + 1] = 0x15;
+
+	cpu->registers[3] = 19;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->dt == 19);
+
+	test_free(cpu);
+}
 
 int main(int argc, char **argv) {
 
@@ -1013,7 +1047,8 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_clear_screen),
 		cmocka_unit_test(test_increments_pc_when_vx_equals_vy),
 
-		cmocka_unit_test(test_loads_dt_into_vx)
+		cmocka_unit_test(test_loads_dt_into_vx),
+		cmocka_unit_test(test_loads_vx_into_dt)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
