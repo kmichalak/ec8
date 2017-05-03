@@ -16,6 +16,8 @@ struct Cpu {
 	unsigned short stack[16];
 	unsigned short sp;
 	unsigned char key[16];
+	unsigned char dt;
+	unsigned char st;
 	void (*fetch_opcode)(Cpu *cpu);
 	void (*handle_opcode)(Cpu *cpu);
 

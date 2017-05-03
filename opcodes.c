@@ -227,4 +227,32 @@ void handle_key(Cpu *cpu) {
 }
 
 // FXNN
-void handle_f(Cpu *cpu) {}
+void handle_f(Cpu *cpu) {
+
+	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short operation = (cpu->opcode & 0x00ff);
+
+	switch (operation) {
+		case 0x07:
+			cpu->registers[reg_num] = cpu->dt;
+			break;
+		case 0x0A:
+			break;
+		case 0x15:
+			break;
+		case 0x18:
+			break;
+		case 0x1E:
+			break;
+		case 0x29:
+			break;
+		case 0x33:
+			break;
+		case 0x55:
+			break;
+		case 0x65:
+			break;
+	}
+
+
+}
