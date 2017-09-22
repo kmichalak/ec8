@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h> // just for memcpy and memset
 
-// #include <SDL2/SDL_events.h>
-
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL.h>
 #include "opcodes.h"
 
 #include <stdio.h>
@@ -211,6 +211,68 @@ void draw(Cpu *cpu) {
 
 // EXNN
 void handle_key(Cpu *cpu) {
+	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
+	unsigned short operation = (cpu->opcode & 0x00ff);
+
+	SDL_Event event;
+	char current_key = -1; 
+
+	while (SDL_PollEvent(&event)) {
+		// uint8_t keyboard_state = SDL_GetKeyboardState(0);
+		
+		if (event.type == SDL_KEYDOWN) {
+			SDL_Scancode key_index = event.key.keysym.scancode;
+			switch (key_index) {
+				case SDL_SCANCODE_0:
+					current_key = 0;
+					break;
+				case SDL_SCANCODE_1:
+					current_key = 1;
+					break;
+				case SDL_SCANCODE_2:
+					current_key = 2;
+					break;
+				case SDL_SCANCODE_3:
+					current_key = 3;
+					break;
+				case SDL_SCANCODE_4:
+					current_key = 4;
+					break;
+				case SDL_SCANCODE_5:
+					current_key = 5;
+					break;
+				case SDL_SCANCODE_6:
+					current_key = 6;
+					break;
+				case SDL_SCANCODE_7:
+					current_key = 7;
+					break;
+				case SDL_SCANCODE_8:
+					current_key = 8;
+					break;
+				case SDL_SCANCODE_9:
+					current_key = 9;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	if (operation == 0x9E) {
+		// SKP Vx - skip next instruction if key with the value of Vx is pressed
+		if (cpu->registers[reg_num] == current_key) {
+			cpu->PC += 1;
+		}
+	} else if (operation == 0xA1) {
+		// SKNP Vx - skip next intruction if the key with value of Vx is not 
+		// 			 pressed
+		if (cpu->registers[reg_num] != current_key) {
+			cpu->PC += 2;
+		}
+	}
+	cpu->PC += 2;
+
 	// SDL_Event event;
 	// while (SDL_PollEvent(&event)) {
 
@@ -226,6 +288,40 @@ void handle_key(Cpu *cpu) {
 	// }
 }
 
+// char wait_for_key() {
+// 	bool waits_for_key = true;
+
+// 	SDL_Event event;
+// 	char key_index;
+// 	while (SDL_PollEvent(&event) && waits_for_key) {
+// 		uint8_t keyboard_state = SDL_GetKeyboardState(0);
+// 		if (event.type = SDL_KEYDOWN) {
+// 			SDL_Scancode keyIndex = event.key.keysym.scancode;
+// 			switch (keyIndex) {
+// 				case SDL_SCANCODE_0:
+// 				case SDL_SCANCODE_1:
+// 				case SDL_SCANCODE_2:
+// 				case SDL_SCANCODE_3:
+// 				case SDL_SCANCODE_4:
+// 				case SDL_SCANCODE_5:
+// 				case SDL_SCANCODE_6:
+// 				case SDL_SCANCODE_7:
+// 				case SDL_SCANCODE_8:
+// 				case SDL_SCANCODE_9:
+// 					key_index = SDL_SCANCODE_0 - keyIndex;
+// 					waits_for_key = false;	
+// 					break;
+// 				default: 
+// 					continue;
+// 			}
+// 			// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
+
+// 			// }
+// 		}
+// 	}
+// 	return key_index;
+// }
+
 // FXNN
 void handle_f(Cpu *cpu) {
 
@@ -238,6 +334,12 @@ void handle_f(Cpu *cpu) {
 			cpu->registers[reg_num] = cpu->dt;
 			break;
 		case 0x0A:
+			// Wait for a key press, store the value of the key in Vx.
+			// All execution stops until a key is pressed, then value of that
+			// key is stored in Vx. 
+			// TODO: What about timers, hould they also be stopped, or they 
+			// 		 are just running?
+			// cpu->registers[reg_num] = wait_for_key();
 			break;
 		case 0x15:
 			cpu->dt = value;

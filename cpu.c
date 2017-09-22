@@ -24,6 +24,10 @@ static void handle_opcode(Cpu *cpu) {
 	handler(cpu);
 }
 
+static bool is_running(Cpu *cpu) {
+	return cpu->running;
+}
+
 void initialize(Cpu *cpu) {
 	cpu->PC = 0;
 	cpu->I = 0;
@@ -35,6 +39,7 @@ void initialize(Cpu *cpu) {
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;
+	cpu->is_running = is_running;
 	// cpu->display = NULL;
 	cpu->display = malloc(sizeof(Display));
 	init_display(cpu->display);
@@ -57,6 +62,8 @@ void initialize(Cpu *cpu) {
 	ops_handlers[0xD] = draw;
 	ops_handlers[0xE] = handle_key;
 	ops_handlers[0xF] = handle_f;
+
+	cpu->running = true;
 }
 
 void shutdown_cpu(Cpu *cpu) {

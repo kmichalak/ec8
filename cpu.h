@@ -20,8 +20,10 @@ struct Cpu {
 	unsigned char st;
 	void (*fetch_opcode)(Cpu *cpu);
 	void (*handle_opcode)(Cpu *cpu);
+	bool (*is_running)(Cpu *cpu);
 
 	Display *display;
+	bool running;
 };
 
 void initialize(Cpu *cpu);
