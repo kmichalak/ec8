@@ -12,13 +12,14 @@ static void test_increments_pc_after_opcode_handle(void **state) {
 	Cpu *cpu = test_malloc(sizeof(Cpu));
 	initialize(cpu);
 
+	unsigned short initial_pc = cpu->PC;
 	cpu->memory[cpu->PC] = 0x61;
 	cpu->memory[cpu->PC + 1] = 0xAA;
 
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->PC == 2);
+	assert_true(cpu->PC == initial_pc + 2);
 
 	shutdown(cpu);
 	test_free(cpu);
@@ -165,8 +166,7 @@ static void test_call_subroutine_puts_current_address_in_stack(void **state) {
 
 	initialize(cpu);
 
-	unsigned short initial_pc = 1;
-	cpu->PC += initial_pc;
+	unsigned short initial_pc = cpu->PC;
 	cpu->memory[cpu->PC] = 0x2A;
 	cpu->memory[cpu->PC + 1] = 0xAA;
 
@@ -857,7 +857,8 @@ static void test_display_bytes(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->display->screen[4] == 0xAA55000000000000);
+	assert_true(cpu->display->screen[4] == 0xAA00000000000000);
+	assert_true(cpu->display->screen[5] == 0x5500000000000000);
 
 	shutdown(cpu);
 	test_free(cpu);

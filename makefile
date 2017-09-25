@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -ggdb -Wall -I/usr/include
 
-LIBS = -lSDL2
+LIBS = -lSDL2 -lm
 LIBDIR = /usr/local/lib
 
 TARGET = ck8
@@ -9,7 +9,8 @@ MAIN = ck8
 OPCODES = opcodes
 CPU = cpu
 DISPLAY = display
-ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o
+TIMER = timer
+ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o $(TIMER).o
 
 
 
@@ -17,10 +18,10 @@ all: $(TARGET)
 
 
 $(TARGET): $(ALL_OBJECTS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(ALL_OBJECTS) -L/usr/local/lib -lSDL2 #-L $(LIBDIR) $(LIBS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(ALL_OBJECTS) -L $(LIBDIR) $(LIBS)
 
 
-$(MAIN).o: $(MAIN).c $(OPCODES).h $(CPU).h
+$(MAIN).o: $(MAIN).c $(OPCODES).h $(CPU).h $(TIMER).h
 	$(CC) $(CFLAGS) -c $(MAIN).c
 
 
@@ -35,6 +36,9 @@ $(CPU).o: $(CPU).c $(CPU).h $(DISPLAY).h
 $(DISPLAY).o: $(DISPLAY).c $(DISPLAY).h 
 	$(CC) $(CFLAGS) -c $(DISPLAY).c 
 
+
+$(TIMER).o: $(TIMER).c $(TIMER).h
+	$(CC) $(CFLAGS) -c $(TIMER).c
 
 test: 
 	$(MAKE) -C tests

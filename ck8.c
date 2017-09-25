@@ -1,20 +1,10 @@
 #include <stdlib.h>
 #include "cpu.h"
 #include "ck8.h"
+#include "timer.h"
 
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL.h>
-
-
-
-// opcode_handler ops_handlers[16];
-
-// int emulate_cycle(Cpu *cpu) {
-// 	cpu->fetch_opcode(cpu);
-// 	cpu->handle_opcode(cpu);
-// 	// update timers
-// 	return 0;
-// }
 
 char wait_for_key() {
 	bool waits_for_key = true;
@@ -25,12 +15,10 @@ char wait_for_key() {
 
 	while (waits_for_key) {
 		while (SDL_PollEvent(&event)) {
-			printf("Running SDL_PollEvent loop\n");
 			uint8_t keyboard_state = SDL_GetKeyboardState(0);
-			if (event.type = SDL_KEYDOWN) {
-				printf("Key type is SDL_KEYDOWN\n");
+			if (event.type == SDL_KEYDOWN) {
 				SDL_Scancode keyIndex = event.key.keysym.scancode;
-				printf("Got scan code %d\n", keyIndex);
+
 				switch (keyIndex) {
 					case SDL_SCANCODE_0:
 					case SDL_SCANCODE_1:
@@ -49,56 +37,20 @@ char wait_for_key() {
 					default: 
 						break;
 				}
-				// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
-
-				// }
+			
 			}	
 		}
 	}
 
-
-
-	// while (!SDL_PollEvent(&event) && waits_for_key) {
-		
-	// 	printf("Running SDL_PollEvent loop\n");
-	// 	uint8_t keyboard_state = SDL_GetKeyboardState(0);
-	// 	if (event.type = SDL_KEYDOWN) {
-	// 		printf("Key type is SDL_KEYDOWN\n");
-	// 		SDL_Scancode keyIndex = event.key.keysym.scancode;
-	// 		printf("Got scan code %d\n", keyIndex);
-	// 		switch (keyIndex) {
-	// 			case SDL_SCANCODE_0:
-	// 			case SDL_SCANCODE_1:
-	// 			case SDL_SCANCODE_2:
-	// 			case SDL_SCANCODE_3:
-	// 			case SDL_SCANCODE_4:
-	// 			case SDL_SCANCODE_5:
-	// 			case SDL_SCANCODE_6:
-	// 			case SDL_SCANCODE_7:
-	// 			case SDL_SCANCODE_8:
-	// 			case SDL_SCANCODE_9:
-	// 				key_index = SDL_SCANCODE_0 - keyIndex;
-	// 				waits_for_key = false;	
-	// 				break;
-	// 			default: 
-	// 				continue;
-	// 		}
-	// 		// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
-
-	// 		// }
-	// 	}
-	// }
-	printf("Returning results\n");
 	return key_index;
 }
 
-int main(int argc, char* argv[]) {
+static void run_cpu_cycle(Timer *timer, void *data) {
+	printf("Handling tick\n");
+	Cpu *cpu = (Cpu *) data;
 
-	Cpu *cpu = malloc(sizeof(Cpu));
-	initialize(cpu);
-	// SDL_Init(SDL_INIT_EVERYTHING);
-
-	while (cpu->is_running(cpu)) {
+	if (cpu->is_running(cpu)) {
+		printf("CPU is running\n");
 		cpu->fetch_opcode(cpu);
 		cpu->handle_opcode(cpu);
 
@@ -106,12 +58,10 @@ int main(int argc, char* argv[]) {
 		char key_index;
 
 		while (SDL_PollEvent(&event)) {
-			printf("Running SDL_PollEvent loop\n");
 			uint8_t keyboard_state = SDL_GetKeyboardState(0);
-			if (event.type = SDL_KEYDOWN) {
-				printf("Key type is SDL_KEYDOWN\n");
+			if (event.type == SDL_KEYDOWN) {
 				SDL_Scancode keyIndex = event.key.keysym.scancode;
-				printf("Got scan code %d\n", keyIndex);
+
 				switch (keyIndex) {
 					case SDL_SCANCODE_0:
 					case SDL_SCANCODE_1:
@@ -133,31 +83,25 @@ int main(int argc, char* argv[]) {
 					default: 
 						break;
 				}
-				// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
-
-				// }
+				
 			}	
 		}
-
+		timer->counter = 60;
+	} else {
+		printf("Shutting down CPU\n");
+		timer->counter = 0;
+		timer->enabled = false;
 	}
-
-	// char key = wait_for_key();
-
-
-	// SDL_Quit();
-	// printf("-------------->");
-	// printf(key);
-	// printf("<--------------");
+}
 
 
-	// initialize(cpu);
+int main(int argc, char* argv[]) {
 
-	// while(1) {
+	Cpu *cpu = malloc(sizeof(Cpu));
+	initialize(cpu);
 
-		// run CPU cycle
-		// draw graphics if draw flag is set
-		// set keys
-	// }
+	Timer *main_timer = malloc(sizeof(Timer));
+	init_timer(main_timer, cpu, run_cpu_cycle);
 
 	shutdown_cpu(cpu);
 

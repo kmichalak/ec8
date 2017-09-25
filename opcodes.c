@@ -20,13 +20,24 @@ void handle_0(Cpu *cpu) {
 			break;
 		default:
 			// Call program at address NNN
+			// cpu->PC = cpu->opcode & 0x0fff;
+			cpu->PC += 2;
+			// cpu->stack[cpu->sp] = cpu->PC & 0xffff;
+			// cpu->sp += 1;
+
+			// // cpu->PC = cpu->opcode & 0x0fff;
+			// cpu->PC = opcode_arg;
+
+			// cpu->fetch_opcode(cpu);
+			// cpu->handle_opcode(cpu);
 			break;
 	}
 }
 
 // 00E0
 void clear_screen(Cpu *cpu) {
-	memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
+	cpu->display->clear_screen(cpu->display);
+	// memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
 }
 
 // 00EE
@@ -188,10 +199,26 @@ void random_vx(Cpu *cpu) {
 	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
 
 	cpu->registers[reg_num] = val & (rand() % 256);
+	cpu->PC += 2;
+}
+
+const char *byte_to_binary(int x)
+{
+    static char b[9];
+    b[0] = '\0';
+
+    int z;
+    for (z = 128; z > 0; z >>= 1)
+    {
+        strcat(b, ((x & z) == z) ? "1" : "0");
+    }
+
+    return b;
 }
 
 // DXYN
 void draw(Cpu *cpu) {
+
 	unsigned short xpos_reg = (cpu->opcode & 0x0f00) >> 8;
 	unsigned short ypos_reg = (cpu->opcode & 0x00f0) >> 4;
 	unsigned short bytes_num = (cpu->opcode & 0x000f);
@@ -199,14 +226,18 @@ void draw(Cpu *cpu) {
 	unsigned char xpos = cpu->registers[xpos_reg];
 	unsigned char ypos = cpu->registers[ypos_reg];
 
-	unsigned char *sprite = calloc(16, sizeof(unsigned char));
+	unsigned char sprite[bytes_num];
 
 	for (int i=0; i< bytes_num; i++) {
 		sprite[i] = cpu->memory[cpu->I + i];
 	}
 
+	// SDL_SetRenderDrawColor(cpu->display->renderer, 0, 0, 0, 0);		
+			
 	cpu->display->put_pixels(cpu->display, sprite, bytes_num, xpos, ypos);
 	cpu->display->write_collision_state(cpu->display, &cpu->registers[0xf]);
+
+	cpu->PC += 2;
 }
 
 // EXNN
@@ -288,40 +319,6 @@ void handle_key(Cpu *cpu) {
 	// }
 }
 
-// char wait_for_key() {
-// 	bool waits_for_key = true;
-
-// 	SDL_Event event;
-// 	char key_index;
-// 	while (SDL_PollEvent(&event) && waits_for_key) {
-// 		uint8_t keyboard_state = SDL_GetKeyboardState(0);
-// 		if (event.type = SDL_KEYDOWN) {
-// 			SDL_Scancode keyIndex = event.key.keysym.scancode;
-// 			switch (keyIndex) {
-// 				case SDL_SCANCODE_0:
-// 				case SDL_SCANCODE_1:
-// 				case SDL_SCANCODE_2:
-// 				case SDL_SCANCODE_3:
-// 				case SDL_SCANCODE_4:
-// 				case SDL_SCANCODE_5:
-// 				case SDL_SCANCODE_6:
-// 				case SDL_SCANCODE_7:
-// 				case SDL_SCANCODE_8:
-// 				case SDL_SCANCODE_9:
-// 					key_index = SDL_SCANCODE_0 - keyIndex;
-// 					waits_for_key = false;	
-// 					break;
-// 				default: 
-// 					continue;
-// 			}
-// 			// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
-
-// 			// }
-// 		}
-// 	}
-// 	return key_index;
-// }
-
 // FXNN
 void handle_f(Cpu *cpu) {
 
@@ -337,7 +334,7 @@ void handle_f(Cpu *cpu) {
 			// Wait for a key press, store the value of the key in Vx.
 			// All execution stops until a key is pressed, then value of that
 			// key is stored in Vx. 
-			// TODO: What about timers, hould they also be stopped, or they 
+			// TODO: What about timers, should they also be stopped, or they 
 			// 		 are just running?
 			// cpu->registers[reg_num] = wait_for_key();
 			break;

@@ -10,6 +10,26 @@
 
 opcode_handler ops_handlers[16];
 
+static unsigned char chip8_fontset[80] =
+{
+  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
 static void fetch_opcode(Cpu *cpu) {
 	cpu->opcode = cpu->memory[cpu->PC] << 8 | cpu->memory[cpu->PC + 1];
 }
@@ -21,6 +41,8 @@ static void handle_opcode(Cpu *cpu) {
 
 	opcode_handler handler = ops_handlers[opcode_group];
 
+
+
 	handler(cpu);
 }
 
@@ -29,22 +51,22 @@ static bool is_running(Cpu *cpu) {
 }
 
 void initialize(Cpu *cpu) {
-	cpu->PC = 0;
+	cpu->PC = 0x200;
 	cpu->I = 0;
 	cpu->sp = 0;
 
-	memset(cpu->memory, 0, sizeof(cpu->memory));
-	memset(cpu->registers, 0, sizeof(cpu->registers));
+	memset(cpu->memory, 0, sizeof(char) * 4096);
+	memcpy(cpu->memory, chip8_fontset, sizeof(char) * 80);
+
+	memset(cpu->registers, 0, sizeof(char) * 16);
 	memset(cpu->stack, 0, sizeof(cpu->stack));
+
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;
 	cpu->is_running = is_running;
-	// cpu->display = NULL;
 	cpu->display = malloc(sizeof(Display));
 	init_display(cpu->display);
-
-
 	
 	ops_handlers[0x0] = handle_0;
 	ops_handlers[0x1] = jump;

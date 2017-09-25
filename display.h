@@ -14,6 +14,7 @@ struct Display {
     SDL_Renderer *renderer;
     void (*put_pixels)(Display *display, unsigned char *sprite, unsigned short sprite_size, unsigned char x, unsigned char y);
     void (*write_collision_state)(Display *display, unsigned char *cpu_reg);
+    void (*clear_screen)();
 };
 
 void init_display(Display *display);

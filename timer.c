@@ -4,7 +4,7 @@
 
 #include "timer.h"
 
-static void tick(Timer *timer) {
+static void tick(Timer *timer, void *data) {
 	unsigned short freq = 1000/60;
 
 	struct timespec	spec;
@@ -20,13 +20,13 @@ static void tick(Timer *timer) {
 		timer->time = spec;
 		timer->counter -= 1;
 		timer->enabled = timer->counter;
-		timer->tick_callback(timer);
+		timer->tick_callback(timer, data);
 	}
 }
 
 
 
-void init_timer(Timer *timer, void (*tick_callback)(Timer *timer)) {
+void init_timer(Timer *timer, void *data, void (*tick_callback)(Timer *timer, void *data)) {
 	timer->counter = 60;
 	timer->enabled = true;
 	timer->tick = tick;
@@ -34,6 +34,6 @@ void init_timer(Timer *timer, void (*tick_callback)(Timer *timer)) {
 	clock_gettime(CLOCK_REALTIME, &(timer->time));
 
 	while (timer->enabled) {
-		timer->tick(timer);
+		timer->tick(timer, data);
 	}
 }
