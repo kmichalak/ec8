@@ -5,6 +5,11 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
+#define DISPLAY_WIDTH 64
+#define DISPLAY_HEIGHT 32
+#define DISPLAY_SCALE 10
+#define SPRITE_SIZE 8
+
 typedef struct Display Display;
 
 struct Display {

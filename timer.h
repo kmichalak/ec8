@@ -8,6 +8,7 @@
 
 typedef struct Timer Timer;
 
+void init_timer2(Timer *timer, void *data, void (*tick_calback)(Timer *timer, void *data));
 void init_timer(Timer *timer, void *data, void (*tick_calback)(Timer *timer, void *data));
 
 struct Timer {

@@ -9,10 +9,10 @@ void write_collision_state(Display *display, unsigned char *cpu_reg) {
 
  void put_pixel(unsigned x, unsigned y, Display *display) {
 	SDL_Rect pixel_rect;
-	pixel_rect.x = x * 10;
-	pixel_rect.y = y * 10;
-	pixel_rect.w = 10;
-	pixel_rect.h = 10;
+	pixel_rect.x = x * DISPLAY_SCALE;
+	pixel_rect.y = y * DISPLAY_SCALE;
+	pixel_rect.w = DISPLAY_SCALE;
+	pixel_rect.h = DISPLAY_SCALE;
 
 	Uint8 r;
 	Uint8 g; 
@@ -47,7 +47,12 @@ void put_pixels(Display *display, unsigned char *sprite,
  	uint64_t line = 0;
  	for (int i=0; i<sprite_size; i++) {
  		uint64_t sprite_line = sprite[i];
- 		line = (sprite_line << (64 - 8 - x));
+ 		int64_t shift_size = DISPLAY_WIDTH - SPRITE_SIZE - x + 1;
+ 		if (shift_size > 0) {
+ 			line = (sprite_line << shift_size);
+ 		} else {
+ 			line = (sprite_line >> -shift_size);
+ 		}
 
  		int64_t buff = display->screen[y + i] ^ line;
  		int64_t collision_buff = display->screen[y + i] | line;
@@ -57,12 +62,12 @@ void put_pixels(Display *display, unsigned char *sprite,
  		display->screen[y + i] = buff; 			
  	}
 
- 	for (int yy=0; yy<32; yy++) {
+ 	for (int yy=0; yy<DISPLAY_HEIGHT; yy++) {
 		uint64_t screen_line = display->screen[yy];
-		for (int xx=0; xx<64; xx++) {
+		for (int xx=0; xx<DISPLAY_WIDTH; xx++) {
 			bool pixel_on = (screen_line >> xx) & 0x1;
 			if (pixel_on) {
-				put_pixel(64 - xx, yy, display);
+				put_pixel(DISPLAY_WIDTH - xx, yy, display);
 			}
 		}
 	}	
@@ -77,7 +82,7 @@ void clear(Display *display) {
 }
 
 void init_display(Display *display) {
-	memset(display->screen, 0, sizeof(uint64_t) * 32);
+	memset(display->screen, 0, sizeof(uint64_t) * DISPLAY_HEIGHT);
 
 	display->put_pixels = put_pixels;
 	display->write_collision_state = write_collision_state;
@@ -92,7 +97,7 @@ void init_display(Display *display) {
 			"Chip-8", 
 			SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED, 
-			640, 320,
+			DISPLAY_WIDTH * DISPLAY_SCALE, DISPLAY_HEIGHT * DISPLAY_SCALE,
 			SDL_WINDOW_SHOWN
 		);
 

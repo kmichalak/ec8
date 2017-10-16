@@ -2,6 +2,7 @@
 #define CPU_H
 
 #include "display.h"
+#include "timer.h"
 
 typedef struct Cpu Cpu;
 
@@ -18,6 +19,8 @@ struct Cpu {
 	unsigned char key[16];
 	unsigned char dt;
 	unsigned char st;
+	Timer *deelay_timer;
+	Timer *sound_timer;
 	void (*fetch_opcode)(Cpu *cpu);
 	void (*handle_opcode)(Cpu *cpu);
 	bool (*is_running)(Cpu *cpu);

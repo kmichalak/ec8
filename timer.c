@@ -25,13 +25,17 @@ static void tick(Timer *timer, void *data) {
 }
 
 
-
-void init_timer(Timer *timer, void *data, void (*tick_callback)(Timer *timer, void *data)) {
+void init_timer2(Timer *timer, void *data, void (*tick_callback)(Timer *timer, void *data)) {
 	timer->counter = 60;
 	timer->enabled = true;
 	timer->tick = tick;
 	timer->tick_callback = tick_callback;
 	clock_gettime(CLOCK_REALTIME, &(timer->time));
+}
+
+
+void init_timer(Timer *timer, void *data, void (*tick_callback)(Timer *timer, void *data)) {
+	init_timer2(timer, data, tick_callback);
 
 	while (timer->enabled) {
 		timer->tick(timer, data);

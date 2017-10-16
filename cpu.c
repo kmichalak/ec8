@@ -38,10 +38,8 @@ static void handle_opcode(Cpu *cpu) {
 	// single opcode is two bytes (16 bits) so if we shift it by 12 bits
 	// we will receive opcode group marker
 	unsigned short opcode_group = (cpu->opcode & 0xF000) >> 12;
-
+	printf("Handling opcode %x\n", cpu->opcode);
 	opcode_handler handler = ops_handlers[opcode_group];
-
-
 
 	handler(cpu);
 }
@@ -50,16 +48,37 @@ static bool is_running(Cpu *cpu) {
 	return cpu->running;
 }
 
+static void decrement_dt(Timer *timer, void *data) {
+	Cpu *cpu = (Cpu *) data;
+	printf("Decrementing DT: %d -> %d\n", cpu->dt, cpu->dt - 1);
+	cpu->dt--;
+	if (cpu->dt == 0) {
+		timer->enabled = false;
+	} else {
+		timer->enabled = true;
+	}
+}
+
+static void decrement_st(Timer *timer, void *data) {
+	Cpu *cpu = (Cpu *) data;
+	cpu->st--;
+	if (cpu->st == 0) {
+		timer->enabled = false;
+	} else {
+		timer->enabled = true;
+	}
+}
+
 void initialize(Cpu *cpu) {
 	cpu->PC = 0x200;
-	cpu->I = 0;
+	cpu->I = 0x200;
 	cpu->sp = 0;
 
 	memset(cpu->memory, 0, sizeof(char) * 4096);
 	memcpy(cpu->memory, chip8_fontset, sizeof(char) * 80);
 
 	memset(cpu->registers, 0, sizeof(char) * 16);
-	memset(cpu->stack, 0, sizeof(cpu->stack));
+	memset(cpu->stack, 0, sizeof(char) * 16);
 
 
 	cpu->fetch_opcode = fetch_opcode;
@@ -84,6 +103,30 @@ void initialize(Cpu *cpu) {
 	ops_handlers[0xD] = draw;
 	ops_handlers[0xE] = handle_key;
 	ops_handlers[0xF] = handle_f;
+
+	cpu->dt = 0;
+	cpu->st = 0;
+	// cpu->deelay_timer = malloc(sizeof(Timer));
+	// cpu->sound_timer = malloc(sizeof(Timer));
+
+	// init_timer2(cpu->deelay_timer, cpu, decrement_dt);
+	// init_timer2(cpu->sound_timer, cpu, decrement_st);
+
+	int mem_pos = 0x200;
+
+	FILE *fl = fopen("/home/kmichalak/PONG", "r");  
+    fseek(fl, 0, SEEK_END);  
+    long len = ftell(fl);  
+    char *ret = malloc(len);  
+    fseek(fl, 0, SEEK_SET);  
+    fread(ret, 1, len, fl);  
+    fclose(fl);  
+
+    for (int a = 0; a < len; a++) {
+    	printf("Rewriting byte %x\n", ret[a]);
+    	cpu->memory[mem_pos + a] = ret[a];
+    }
+
 
 	cpu->running = true;
 }

@@ -42,8 +42,9 @@ void clear_screen(Cpu *cpu) {
 
 // 00EE
 void return_from_rsubutine(Cpu *cpu) {
-	cpu->PC = cpu->stack[cpu->sp];
 	cpu->sp -= 1;
+	cpu->PC = cpu->stack[cpu->sp];
+	cpu->PC += 2;
 }
 
 // 1NNN
@@ -58,8 +59,8 @@ void call_subrutine(Cpu *cpu) {
 
 	cpu->PC = cpu->opcode & 0x0fff;
 
-	cpu->fetch_opcode(cpu);
-	cpu->handle_opcode(cpu);
+	// cpu->fetch_opcode(cpu);
+	// cpu->handle_opcode(cpu);
 }
 
 // 3XNN
@@ -166,6 +167,7 @@ void handle_8(Cpu *cpu) {
 		default:
 			break;
 	}
+	cpu->PC += 2;
 }
 
 // 9XY0
@@ -202,20 +204,6 @@ void random_vx(Cpu *cpu) {
 	cpu->PC += 2;
 }
 
-const char *byte_to_binary(int x)
-{
-    static char b[9];
-    b[0] = '\0';
-
-    int z;
-    for (z = 128; z > 0; z >>= 1)
-    {
-        strcat(b, ((x & z) == z) ? "1" : "0");
-    }
-
-    return b;
-}
-
 // DXYN
 void draw(Cpu *cpu) {
 
@@ -227,6 +215,8 @@ void draw(Cpu *cpu) {
 	unsigned char ypos = cpu->registers[ypos_reg];
 
 	unsigned char sprite[bytes_num];
+
+	printf("Drawing %d bytes at pos %d:%d, startung @ %d\n", bytes_num, xpos, ypos, cpu->I);
 
 	for (int i=0; i< bytes_num; i++) {
 		sprite[i] = cpu->memory[cpu->I + i];
@@ -248,52 +238,53 @@ void handle_key(Cpu *cpu) {
 	SDL_Event event;
 	char current_key = -1; 
 
-	while (SDL_PollEvent(&event)) {
-		// uint8_t keyboard_state = SDL_GetKeyboardState(0);
+	// while (SDL_PollEvent(&event)) {
+	// 	// uint8_t keyboard_state = SDL_GetKeyboardState(0);
 		
-		if (event.type == SDL_KEYDOWN) {
-			SDL_Scancode key_index = event.key.keysym.scancode;
-			switch (key_index) {
-				case SDL_SCANCODE_0:
-					current_key = 0;
-					break;
-				case SDL_SCANCODE_1:
-					current_key = 1;
-					break;
-				case SDL_SCANCODE_2:
-					current_key = 2;
-					break;
-				case SDL_SCANCODE_3:
-					current_key = 3;
-					break;
-				case SDL_SCANCODE_4:
-					current_key = 4;
-					break;
-				case SDL_SCANCODE_5:
-					current_key = 5;
-					break;
-				case SDL_SCANCODE_6:
-					current_key = 6;
-					break;
-				case SDL_SCANCODE_7:
-					current_key = 7;
-					break;
-				case SDL_SCANCODE_8:
-					current_key = 8;
-					break;
-				case SDL_SCANCODE_9:
-					current_key = 9;
-					break;
-				default:
-					break;
-			}
-		}
-	}
+	// 	if (event.type == SDL_KEYDOWN) {
+	// 		SDL_Scancode key_index = event.key.keysym.scancode;
+	// 		switch (key_index) {
+	// 			case SDL_SCANCODE_0:
+	// 				current_key = 0;
+	// 				break;
+	// 			case SDL_SCANCODE_1:
+	// 				current_key = 1;
+	// 				break;
+	// 			case SDL_SCANCODE_2:
+	// 				current_key = 2;
+	// 				break;
+	// 			case SDL_SCANCODE_3:
+	// 				current_key = 3;
+	// 				break;
+	// 			case SDL_SCANCODE_4:
+	// 				current_key = 4;
+	// 				break;
+	// 			case SDL_SCANCODE_5:
+	// 				current_key = 5;
+	// 				break;
+	// 			case SDL_SCANCODE_6:
+	// 				current_key = 6;
+	// 				break;
+	// 			case SDL_SCANCODE_7:
+	// 				current_key = 7;
+	// 				break;
+	// 			case SDL_SCANCODE_8:
+	// 				current_key = 8;
+	// 				break;
+	// 			case SDL_SCANCODE_9:
+	// 				current_key = 9;
+	// 				break;
+	// 			default:
+	// 				break;
+	// 		}
+	// 	}
+	// }
 
+	printf("Checking key press for V[%x] == %x\n", reg_num, cpu->registers[reg_num]);
 	if (operation == 0x9E) {
 		// SKP Vx - skip next instruction if key with the value of Vx is pressed
 		if (cpu->registers[reg_num] == current_key) {
-			cpu->PC += 1;
+			cpu->PC += 2;
 		}
 	} else if (operation == 0xA1) {
 		// SKNP Vx - skip next intruction if the key with value of Vx is not 
@@ -339,6 +330,7 @@ void handle_f(Cpu *cpu) {
 			// cpu->registers[reg_num] = wait_for_key();
 			break;
 		case 0x15:
+			printf("Setting DT value to ----------> %x [%d]\n", value, value);
 			cpu->dt = value;
 			break;
 		case 0x18:
@@ -348,6 +340,7 @@ void handle_f(Cpu *cpu) {
 			cpu->I = cpu->I + value;
 			break;
 		case 0x29:
+			cpu->I = cpu->registers[reg_num] * 5;
 			break;
 		case 0x33:
 			for (int i=2; i >= 0; i--) {
@@ -365,5 +358,5 @@ void handle_f(Cpu *cpu) {
 			break;
 	}
 
-
+	cpu->PC += 2;
 }
