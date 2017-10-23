@@ -38,7 +38,7 @@ static void handle_opcode(Cpu *cpu) {
 	// single opcode is two bytes (16 bits) so if we shift it by 12 bits
 	// we will receive opcode group marker
 	unsigned short opcode_group = (cpu->opcode & 0xF000) >> 12;
-	printf("Handling opcode %x\n", cpu->opcode);
+	// printf("Handling opcode %x\n", cpu->opcode);
 	opcode_handler handler = ops_handlers[opcode_group];
 
 	handler(cpu);

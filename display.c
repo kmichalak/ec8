@@ -44,6 +44,7 @@ void put_pixels(Display *display, unsigned char *sprite,
  				 unsigned short sprite_size,
  				 unsigned char x, unsigned char y) {
 
+	SDL_RenderClear(display->renderer);
  	uint64_t line = 0;
  	for (int i=0; i<sprite_size; i++) {
  		uint64_t sprite_line = sprite[i];
@@ -76,6 +77,19 @@ void put_pixels(Display *display, unsigned char *sprite,
 }
 
 void clear(Display *display) {
+	printf("--------------------------------------->");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("Clearing the whole screen");
+	printf("--------------------------------------->");
 	memset(display->screen, 0, sizeof(display->screen));
 	SDL_RenderClear(display->renderer);
 	SDL_RenderPresent(display->renderer);

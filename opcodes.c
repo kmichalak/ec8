@@ -238,76 +238,83 @@ void handle_key(Cpu *cpu) {
 	SDL_Event event;
 	char current_key = -1; 
 
-	// while (SDL_PollEvent(&event)) {
-	// 	// uint8_t keyboard_state = SDL_GetKeyboardState(0);
-		
-	// 	if (event.type == SDL_KEYDOWN) {
-	// 		SDL_Scancode key_index = event.key.keysym.scancode;
-	// 		switch (key_index) {
-	// 			case SDL_SCANCODE_0:
-	// 				current_key = 0;
-	// 				break;
-	// 			case SDL_SCANCODE_1:
-	// 				current_key = 1;
-	// 				break;
-	// 			case SDL_SCANCODE_2:
-	// 				current_key = 2;
-	// 				break;
-	// 			case SDL_SCANCODE_3:
-	// 				current_key = 3;
-	// 				break;
-	// 			case SDL_SCANCODE_4:
-	// 				current_key = 4;
-	// 				break;
-	// 			case SDL_SCANCODE_5:
-	// 				current_key = 5;
-	// 				break;
-	// 			case SDL_SCANCODE_6:
-	// 				current_key = 6;
-	// 				break;
-	// 			case SDL_SCANCODE_7:
-	// 				current_key = 7;
-	// 				break;
-	// 			case SDL_SCANCODE_8:
-	// 				current_key = 8;
-	// 				break;
-	// 			case SDL_SCANCODE_9:
-	// 				current_key = 9;
-	// 				break;
-	// 			default:
-	// 				break;
-	// 		}
-	// 	}
-	// }
+	while (SDL_PollEvent(&event)) {
+		// uint8_t keyboard_state = SDL_GetKeyboardState(0);
+		if (event.type == SDL_KEYDOWN) {
+			SDL_Scancode key_index = event.key.keysym.scancode;
+			if (key_index >= SDL_SCANCODE_0 && key_index <= SDL_SCANCODE_9) {
+				cpu->key[SDL_SCANCODE_0 - key_index] = 1;
+			}
+			
+		}
+		if (event.type == SDL_KEYUP) {
+			SDL_Scancode key_index = event.key.keysym.scancode;
+			// switch (key_index) {
+			if (key_index >= SDL_SCANCODE_0 && key_index <= SDL_SCANCODE_9) {
+				cpu->key[SDL_SCANCODE_0 - key_index] = 0;
+			}
+			// }
+		}
+
+	
+	}
 
 	printf("Checking key press for V[%x] == %x\n", reg_num, cpu->registers[reg_num]);
 	if (operation == 0x9E) {
 		// SKP Vx - skip next instruction if key with the value of Vx is pressed
-		if (cpu->registers[reg_num] == current_key) {
+		char key_val = cpu->registers[reg_num];
+		if (cpu->key[key_val] == 1) {
 			cpu->PC += 2;
 		}
 	} else if (operation == 0xA1) {
 		// SKNP Vx - skip next intruction if the key with value of Vx is not 
 		// 			 pressed
-		if (cpu->registers[reg_num] != current_key) {
+		char key_val = cpu->registers[reg_num];
+		if (cpu->key[key_val] == 0) {
 			cpu->PC += 2;
 		}
 	}
 	cpu->PC += 2;
 
-	// SDL_Event event;
-	// while (SDL_PollEvent(&event)) {
+}
 
-	// 	uint8_t keyboard_state = SDL_GetKeyboardState(0);
+char wait_for_key() {
+	bool waits_for_key = true;
 
-	// 	if (event.type == SDL_KEYDOWN) {
-	// 		SDL_Scancode keyIndex = event.key.keysym.scancode;
-	// 		// if (SDL_Scancode.SDL_SCANCODE_1 == keyIndex) {
-	// 			printf("Got the key \n");
-	// 		// }
-	// 	}
+	SDL_Event event;
+	char key_index;
+	printf("Waiting for key \n");
 
-	// }
+	while (waits_for_key) {
+		while (SDL_PollEvent(&event)) {
+			uint8_t keyboard_state = SDL_GetKeyboardState(0);
+			if (event.type == SDL_KEYDOWN) {
+				SDL_Scancode keyIndex = event.key.keysym.scancode;
+
+				switch (keyIndex) {
+					case SDL_SCANCODE_0:
+					case SDL_SCANCODE_1:
+					case SDL_SCANCODE_2:
+					case SDL_SCANCODE_3:
+					case SDL_SCANCODE_4:
+					case SDL_SCANCODE_5:
+					case SDL_SCANCODE_6:
+					case SDL_SCANCODE_7:
+					case SDL_SCANCODE_8:
+					case SDL_SCANCODE_9:
+						printf("Got the key\n");
+						key_index = SDL_SCANCODE_0 - keyIndex;
+						waits_for_key = false;	
+						break;
+					default: 
+						break;
+				}
+			
+			}	
+		}
+	}
+
+	return key_index;
 }
 
 // FXNN
@@ -327,7 +334,7 @@ void handle_f(Cpu *cpu) {
 			// key is stored in Vx. 
 			// TODO: What about timers, should they also be stopped, or they 
 			// 		 are just running?
-			// cpu->registers[reg_num] = wait_for_key();
+			cpu->registers[reg_num] = wait_for_key();
 			break;
 		case 0x15:
 			printf("Setting DT value to ----------> %x [%d]\n", value, value);
