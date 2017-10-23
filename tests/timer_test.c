@@ -16,7 +16,7 @@
 
 
 static void handle_tick(Timer *timer, void *data) {
-	printf("Tick handled: %d\n", timer->counter);
+	// printf("Tick handled: %d\n", timer->counter);
 }
 
 static void test_timer(void **state) {

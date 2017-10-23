@@ -38,7 +38,6 @@ static void handle_opcode(Cpu *cpu) {
 	// single opcode is two bytes (16 bits) so if we shift it by 12 bits
 	// we will receive opcode group marker
 	unsigned short opcode_group = (cpu->opcode & 0xF000) >> 12;
-	// printf("Handling opcode %x\n", cpu->opcode);
 	opcode_handler handler = ops_handlers[opcode_group];
 
 	handler(cpu);
@@ -50,7 +49,6 @@ static bool is_running(Cpu *cpu) {
 
 static void decrement_dt(Timer *timer, void *data) {
 	Cpu *cpu = (Cpu *) data;
-	printf("Decrementing DT: %d -> %d\n", cpu->dt, cpu->dt - 1);
 	cpu->dt--;
 	if (cpu->dt == 0) {
 		timer->enabled = false;
@@ -106,15 +104,10 @@ void initialize(Cpu *cpu) {
 
 	cpu->dt = 0;
 	cpu->st = 0;
-	// cpu->deelay_timer = malloc(sizeof(Timer));
-	// cpu->sound_timer = malloc(sizeof(Timer));
-
-	// init_timer2(cpu->deelay_timer, cpu, decrement_dt);
-	// init_timer2(cpu->sound_timer, cpu, decrement_st);
-
+	
 	int mem_pos = 0x200;
 
-	FILE *fl = fopen("/home/kmichalak/PONG", "r");  
+	FILE *fl = fopen("/home/kmichalak/UFO", "r");  
     fseek(fl, 0, SEEK_END);  
     long len = ftell(fl);  
     char *ret = malloc(len);  
@@ -123,7 +116,6 @@ void initialize(Cpu *cpu) {
     fclose(fl);  
 
     for (int a = 0; a < len; a++) {
-    	printf("Rewriting byte %x\n", ret[a]);
     	cpu->memory[mem_pos + a] = ret[a];
     }
 
@@ -133,13 +125,6 @@ void initialize(Cpu *cpu) {
 
 void shutdown_cpu(Cpu *cpu) {
 	printf("Shutdown method called\n");
-	// if (cpu == 0) {
-	// 	printf("CPU is already destroyed\n");
-	// }
-	// if (cpu->display == 0) {
-	// 	printf("Display is already destroyed\n");
-	// } 
-
 	destroy_display(cpu->display);
 	free(cpu->display);
 }

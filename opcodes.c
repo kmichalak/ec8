@@ -216,14 +216,10 @@ void draw(Cpu *cpu) {
 
 	unsigned char sprite[bytes_num];
 
-	printf("Drawing %d bytes at pos %d:%d, startung @ %d\n", bytes_num, xpos, ypos, cpu->I);
-
 	for (int i=0; i< bytes_num; i++) {
 		sprite[i] = cpu->memory[cpu->I + i];
 	}
 
-	// SDL_SetRenderDrawColor(cpu->display->renderer, 0, 0, 0, 0);		
-			
 	cpu->display->put_pixels(cpu->display, sprite, bytes_num, xpos, ypos);
 	cpu->display->write_collision_state(cpu->display, &cpu->registers[0xf]);
 
@@ -239,7 +235,6 @@ void handle_key(Cpu *cpu) {
 	char current_key = -1; 
 
 	while (SDL_PollEvent(&event)) {
-		// uint8_t keyboard_state = SDL_GetKeyboardState(0);
 		if (event.type == SDL_KEYDOWN) {
 			SDL_Scancode key_index = event.key.keysym.scancode;
 			if (key_index >= SDL_SCANCODE_0 && key_index <= SDL_SCANCODE_9) {
@@ -249,17 +244,12 @@ void handle_key(Cpu *cpu) {
 		}
 		if (event.type == SDL_KEYUP) {
 			SDL_Scancode key_index = event.key.keysym.scancode;
-			// switch (key_index) {
 			if (key_index >= SDL_SCANCODE_0 && key_index <= SDL_SCANCODE_9) {
 				cpu->key[SDL_SCANCODE_0 - key_index] = 0;
 			}
-			// }
 		}
-
-	
 	}
 
-	printf("Checking key press for V[%x] == %x\n", reg_num, cpu->registers[reg_num]);
 	if (operation == 0x9E) {
 		// SKP Vx - skip next instruction if key with the value of Vx is pressed
 		char key_val = cpu->registers[reg_num];

@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include "cpu.h"
 #include "ck8.h"
-// #include "timer.h"
 
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL.h>
@@ -9,7 +8,6 @@
 
 
 static void run_cpu_cycle(Timer *timer, void *data) {
-	// printf("Handling tick\n");
 	Cpu *cpu = (Cpu *) data;
 
 	if (cpu->is_running(cpu)) {
@@ -111,30 +109,14 @@ static void run_cpu_cycle(Timer *timer, void *data) {
 			}
 		}
 
-		// printf("CPU is running\n");
 		cpu->fetch_opcode(cpu);
 		cpu->handle_opcode(cpu);
 		if (cpu->dt > 0) {		
-			printf("DT: %d\n", cpu->dt);
 			cpu->dt = cpu->dt - 1;
 		}
 		if (cpu->st > 0) {
-			printf("ST: %d\n", cpu->st);
 			cpu->st = cpu->st - 1;
 		}
-
-
-
-		// cpu->deelay_timer->tick(cpu->deelay_timer, cpu);
-		// cpu->sound_timer->tick(cpu->sound_timer, cpu);
-
-		// printf("PC %x\n", cpu->PC);
-		// printf("I %x\n", cpu->I);
-		// for (int  i=0; i<16; i++) {
-		// 	printf("V%d %x\n", i, cpu->registers[i]);
-		// }
-
-		// getchar();
 
 		timer->counter = 60;
 	} else {
