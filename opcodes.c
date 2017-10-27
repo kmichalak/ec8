@@ -37,7 +37,6 @@ void handle_0(Cpu *cpu) {
 // 00E0
 void clear_screen(Cpu *cpu) {
 	cpu->display->clear_screen(cpu->display);
-	// memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
 }
 
 // 00EE
@@ -56,11 +55,7 @@ void jump(Cpu *cpu) {
 void call_subrutine(Cpu *cpu) {
 	cpu->stack[cpu->sp] = cpu->PC & 0xffff;
 	cpu->sp += 1;
-
 	cpu->PC = cpu->opcode & 0x0fff;
-
-	// cpu->fetch_opcode(cpu);
-	// cpu->handle_opcode(cpu);
 }
 
 // 3XNN
@@ -277,24 +272,57 @@ char wait_for_key() {
 
 	while (waits_for_key) {
 		while (SDL_PollEvent(&event)) {
-			uint8_t keyboard_state = SDL_GetKeyboardState(0);
 			if (event.type == SDL_KEYDOWN) {
-				SDL_Scancode keyIndex = event.key.keysym.scancode;
+				SDL_Scancode key_scancode = event.key.keysym.scancode;
 
-				switch (keyIndex) {
+				switch (key_scancode) {
 					case SDL_SCANCODE_0:
+						key_index = 0;
+						break;
 					case SDL_SCANCODE_1:
+						key_index = 1;
+						break;
 					case SDL_SCANCODE_2:
+						key_index = 2;
+						break;
 					case SDL_SCANCODE_3:
+						key_index = 3;
+						break;
 					case SDL_SCANCODE_4:
+						key_index = 4;
+						break;
 					case SDL_SCANCODE_5:
+						key_index = 5;
+						break;
 					case SDL_SCANCODE_6:
+						key_index = 6;
+						break;
 					case SDL_SCANCODE_7:
+						key_index = 7;
+						break;
 					case SDL_SCANCODE_8:
+						key_index = 8;
+						break;
 					case SDL_SCANCODE_9:
-						printf("Got the key\n");
-						key_index = SDL_SCANCODE_0 - keyIndex;
-						waits_for_key = false;	
+						key_index = 9;
+						break;
+					case SDL_SCANCODE_A:
+						key_index = 0xA;
+						break;
+					case SDL_SCANCODE_B:
+						key_index = 0xB;
+						break;
+					case SDL_SCANCODE_C:
+						key_index = 0xC;
+						break;
+					case SDL_SCANCODE_D:
+						key_index = 0xD;
+						break;
+					case SDL_SCANCODE_E:
+						key_index = 0xE;
+						break;
+					case SDL_SCANCODE_F:
+						key_index = 0xF;
 						break;
 					default: 
 						break;
