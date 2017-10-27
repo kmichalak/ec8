@@ -11,7 +11,7 @@ CPU = cpu
 DISPLAY = display
 SDL = sdl
 TIMER = timer
-ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o $(TIMER).o
+ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o $(SDL).o $(TIMER).o
 
 
 
@@ -22,7 +22,7 @@ $(TARGET): $(ALL_OBJECTS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(ALL_OBJECTS) -L $(LIBDIR) $(LIBS)
 
 
-$(MAIN).o: $(MAIN).c $(OPCODES).h $(CPU).h $(TIMER).h
+$(MAIN).o: $(MAIN).c $(OPCODES).h $(CPU).h $(TIMER).h $(SDL).h
 	$(CC) $(CFLAGS) -c $(MAIN).c
 
 
@@ -34,7 +34,7 @@ $(CPU).o: $(CPU).c $(CPU).h $(DISPLAY).h
 	$(CC) $(CFLAGS) -c $(CPU).c
 
 
-$(DISPLAY).o: $(DISPLAY).c $(DISPLAY).h $(SDL).h
+$(DISPLAY).o: $(DISPLAY).c $(DISPLAY).h
 	$(CC) $(CFLAGS) -c $(DISPLAY).c 
 
 $(SDL).o: $(SDL).c $(SDL).h

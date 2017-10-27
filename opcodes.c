@@ -229,22 +229,6 @@ void handle_key(Cpu *cpu) {
 	SDL_Event event;
 	char current_key = -1; 
 
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_KEYDOWN) {
-			SDL_Scancode key_index = event.key.keysym.scancode;
-			if (key_index >= SDL_SCANCODE_0 && key_index <= SDL_SCANCODE_9) {
-				cpu->key[SDL_SCANCODE_0 - key_index] = 1;
-			}
-			
-		}
-		if (event.type == SDL_KEYUP) {
-			SDL_Scancode key_index = event.key.keysym.scancode;
-			if (key_index >= SDL_SCANCODE_0 && key_index <= SDL_SCANCODE_9) {
-				cpu->key[SDL_SCANCODE_0 - key_index] = 0;
-			}
-		}
-	}
-
 	if (operation == 0x9E) {
 		// SKP Vx - skip next instruction if key with the value of Vx is pressed
 		char key_val = cpu->registers[reg_num];
