@@ -9,6 +9,7 @@ MAIN = ck8
 OPCODES = opcodes
 CPU = cpu
 DISPLAY = display
+SDL = sdl
 TIMER = timer
 ALL_OBJECTS = $(MAIN).o $(OPCODES).o $(CPU).o $(DISPLAY).o $(TIMER).o
 
@@ -33,9 +34,11 @@ $(CPU).o: $(CPU).c $(CPU).h $(DISPLAY).h
 	$(CC) $(CFLAGS) -c $(CPU).c
 
 
-$(DISPLAY).o: $(DISPLAY).c $(DISPLAY).h 
+$(DISPLAY).o: $(DISPLAY).c $(DISPLAY).h $(SDL).h
 	$(CC) $(CFLAGS) -c $(DISPLAY).c 
 
+$(SDL).o: $(SDL).c $(SDL).h
+	$(CC) $(CFLAGS) -c $(SDL).c
 
 $(TIMER).o: $(TIMER).c $(TIMER).h
 	$(CC) $(CFLAGS) -c $(TIMER).c
