@@ -30,7 +30,7 @@ void get_keyboard_state(char* kbd, bool* cpu_running) {
 				}
 
 			}	
-		} else if (event.type == SDL_KEYDOWN) {
+		} else if (event.type == SDL_KEYUP) {
 			SDL_Scancode key_scancode = event.key.keysym.scancode;
 			for (int key_idx=0; key_idx < KBD_SIZE; key_idx++) {
 

@@ -7,7 +7,7 @@
 
 #define DISPLAY_WIDTH 64
 #define DISPLAY_HEIGHT 32
-#define DISPLAY_SCALE 10
+#define DISPLAY_SCALE 20
 #define SPRITE_SIZE 8
 
 typedef struct Display Display;
