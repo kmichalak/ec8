@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
-void get_keyboard_state(char* kbd, bool* cpu_running);
+#define KBD_SIZE 16
+
+void get_keyboard_state(unsigned char* kbd, bool* cpu_running);
 
 #endif

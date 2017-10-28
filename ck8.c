@@ -27,8 +27,6 @@ static void run_cpu_cycle(Timer *timer, void *data) {
 	}
 }
 
-
-
 int main(int argc, char* argv[]) {
 
 	Cpu *cpu = malloc(sizeof(Cpu));

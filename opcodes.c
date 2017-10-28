@@ -226,19 +226,16 @@ void handle_key(Cpu *cpu) {
 	unsigned short reg_num = (cpu->opcode & 0x0f00) >> 8;
 	unsigned short operation = (cpu->opcode & 0x00ff);
 
-	SDL_Event event;
-	char current_key = -1; 
-
 	if (operation == 0x9E) {
 		// SKP Vx - skip next instruction if key with the value of Vx is pressed
-		char key_val = cpu->registers[reg_num];
+		uint8_t key_val = cpu->registers[reg_num];
 		if (cpu->key[key_val] == 1) {
 			cpu->PC += 2;
 		}
 	} else if (operation == 0xA1) {
 		// SKNP Vx - skip next intruction if the key with value of Vx is not 
 		// 			 pressed
-		char key_val = cpu->registers[reg_num];
+		uint8_t key_val = cpu->registers[reg_num];
 		if (cpu->key[key_val] == 0) {
 			cpu->PC += 2;
 		}

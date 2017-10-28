@@ -31,6 +31,6 @@ struct Cpu {
 
 void initialize(Cpu *cpu);
 
-void shutdown(Cpu *cpu);
+void shutdown_cpu(Cpu *cpu);
 
 #endif

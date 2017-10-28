@@ -47,26 +47,6 @@ static bool is_running(Cpu *cpu) {
 	return cpu->running;
 }
 
-static void decrement_dt(Timer *timer, void *data) {
-	Cpu *cpu = (Cpu *) data;
-	cpu->dt--;
-	if (cpu->dt == 0) {
-		timer->enabled = false;
-	} else {
-		timer->enabled = true;
-	}
-}
-
-static void decrement_st(Timer *timer, void *data) {
-	Cpu *cpu = (Cpu *) data;
-	cpu->st--;
-	if (cpu->st == 0) {
-		timer->enabled = false;
-	} else {
-		timer->enabled = true;
-	}
-}
-
 void initialize(Cpu *cpu) {
 	cpu->PC = 0x200;
 	cpu->I = 0x200;
