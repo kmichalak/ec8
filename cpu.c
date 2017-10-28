@@ -10,6 +10,26 @@
 
 opcode_handler ops_handlers[16];
 
+static unsigned char chip8_fontset[80] =
+{
+  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
 static void fetch_opcode(Cpu *cpu) {
 	cpu->opcode = cpu->memory[cpu->PC] << 8 | cpu->memory[cpu->PC + 1];
 }
@@ -18,25 +38,31 @@ static void handle_opcode(Cpu *cpu) {
 	// single opcode is two bytes (16 bits) so if we shift it by 12 bits
 	// we will receive opcode group marker
 	unsigned short opcode_group = (cpu->opcode & 0xF000) >> 12;
-
 	opcode_handler handler = ops_handlers[opcode_group];
 
 	handler(cpu);
 }
 
+static bool is_running(Cpu *cpu) {
+	return cpu->running;
+}
+
 void initialize(Cpu *cpu) {
-	cpu->PC = 0;
-	cpu->I = 0;
+	cpu->PC = 0x200;
+	cpu->I = 0x200;
 	cpu->sp = 0;
 
-	cpu->display = malloc(sizeof(Display));
-	memset(cpu->display->screen, 0, sizeof(cpu->display->screen));
-	memset(cpu->memory, 0, sizeof(cpu->memory));
-	memset(cpu->registers, 0, sizeof(cpu->registers));
-	memset(cpu->stack, 0, sizeof(cpu->stack));
+	memset(cpu->memory, 0, sizeof(char) * 4096);
+	memcpy(cpu->memory, chip8_fontset, sizeof(char) * 80);
+
+	memset(cpu->registers, 0, sizeof(char) * 16);
+	memset(cpu->stack, 0, sizeof(char) * 16);
+
 
 	cpu->fetch_opcode = fetch_opcode;
 	cpu->handle_opcode = handle_opcode;
+	cpu->is_running = is_running;
+	cpu->display = malloc(sizeof(Display));
 	init_display(cpu->display);
 	
 	ops_handlers[0x0] = handle_0;
@@ -55,8 +81,30 @@ void initialize(Cpu *cpu) {
 	ops_handlers[0xD] = draw;
 	ops_handlers[0xE] = handle_key;
 	ops_handlers[0xF] = handle_f;
+
+	cpu->dt = 0;
+	cpu->st = 0;
+	
+	int mem_pos = 0x200;
+
+	FILE *fl = fopen("/home/kmichalak/UFO", "r");  
+    fseek(fl, 0, SEEK_END);  
+    long len = ftell(fl);  
+    char *ret = malloc(len);  
+    fseek(fl, 0, SEEK_SET);  
+    fread(ret, 1, len, fl);  
+    fclose(fl);  
+
+    for (int a = 0; a < len; a++) {
+    	cpu->memory[mem_pos + a] = ret[a];
+    }
+
+
+	cpu->running = true;
 }
 
-void shutdown(Cpu *cpu) {
+void shutdown_cpu(Cpu *cpu) {
+	printf("Shutdown method called\n");
+	destroy_display(cpu->display);
 	free(cpu->display);
 }

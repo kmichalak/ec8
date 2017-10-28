@@ -12,13 +12,14 @@ static void test_increments_pc_after_opcode_handle(void **state) {
 	Cpu *cpu = test_malloc(sizeof(Cpu));
 	initialize(cpu);
 
+	unsigned short initial_pc = cpu->PC;
 	cpu->memory[cpu->PC] = 0x61;
 	cpu->memory[cpu->PC + 1] = 0xAA;
 
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->PC == 2);
+	assert_true(cpu->PC == initial_pc + 2);
 
 	shutdown(cpu);
 	test_free(cpu);
@@ -165,8 +166,7 @@ static void test_call_subroutine_puts_current_address_in_stack(void **state) {
 
 	initialize(cpu);
 
-	unsigned short initial_pc = 1;
-	cpu->PC += initial_pc;
+	unsigned short initial_pc = cpu->PC;
 	cpu->memory[cpu->PC] = 0x2A;
 	cpu->memory[cpu->PC + 1] = 0xAA;
 
@@ -857,7 +857,8 @@ static void test_display_bytes(void **state) {
 	cpu->fetch_opcode(cpu);
 	cpu->handle_opcode(cpu);
 
-	assert_true(cpu->display->screen[4] == 0xAA55000000000000);
+	assert_true(cpu->display->screen[4] == 0xAA00000000000000);
+	assert_true(cpu->display->screen[5] == 0x5500000000000000);
 
 	shutdown(cpu);
 	test_free(cpu);
@@ -947,6 +948,152 @@ static void test_increments_pc_when_vx_equals_vy(void **state) {
 	test_free(cpu);
 }
 
+static void test_loads_dt_into_vx(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf1;
+	cpu->memory[cpu->PC + 1] = 0x07;		
+
+	cpu->registers[1] = 9;
+	cpu->dt = 18;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->registers[1] == 18);
+
+	test_free(cpu);
+}
+
+// TODO: this test need to be finished before implementatio of instruction 
+// 		 is finished. 
+
+// static void test_stores_key_to_vx_after_key_pressed(void **state) {
+// 	Cpu *cpu = test_malloc(sizeof(Cpu));
+// 	initialize(cpu);
+
+// 	cpu->memory[cpu->PC] = 0xf2;
+// 	cpu->memory[cpu->PC + 1] = 0x0A;
+
+// 	cpu->fetch_opcode(cpu);
+// 	cpu->handle_opcode(cpu);
+
+// 	assert_true(cpu->registers[2] == '');
+
+// 	test_free(cpu);
+// }
+
+static void test_loads_vx_into_dt(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf3;
+	cpu->memory[cpu->PC + 1] = 0x15;
+
+	cpu->registers[3] = 19;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->dt == 19);
+
+	test_free(cpu);
+}
+
+static void test_loads_vx_into_st(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf4;
+	cpu->memory[cpu->PC + 1] = 0x18;
+
+	cpu->registers[4] = 77;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->st == 77);
+
+	test_free(cpu);	
+}
+
+static void test_adds_vx_to_i(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf5;
+	cpu->memory[cpu->PC + 1] = 0x1E;
+	cpu->I = 0x5;
+	cpu->registers[5] = 0x5;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->I == 0xA);
+
+	test_free(cpu);
+}
+
+static void test_stores_bcd_value_of_vx(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xf6;
+	cpu->memory[cpu->PC + 1] = 0x33;
+
+	cpu->I = 0x7;
+	cpu->registers[6] = 128;
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_true(cpu->memory[cpu->I] == 1);
+	assert_true(cpu->memory[cpu->I + 1] == 2);
+	assert_true(cpu->memory[cpu->I + 2] == 8);
+
+	test_free(cpu);
+}
+
+static void test_stores_registers_in_memory(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xff;
+	cpu->memory[cpu->PC + 1] = 0x55;
+
+	for (int i=0; i<16; i++) {
+		cpu->registers[i] = i + 1;
+	}
+	
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(cpu->registers, cpu->memory + cpu->I, 16 * sizeof(unsigned char));
+
+	test_free(cpu);
+}
+
+static void test_reads_memory_into_registers(void **state) {
+	Cpu *cpu = test_malloc(sizeof(Cpu));
+	initialize(cpu);
+
+	cpu->memory[cpu->PC] = 0xff;
+	cpu->memory[cpu->PC + 1] = 0x65;
+
+	cpu->I = cpu->PC + 2;
+	for (int i=0; i<16; i++) {
+		cpu->memory[cpu->I + i] = i + 10;
+	}
+
+	cpu->fetch_opcode(cpu);
+	cpu->handle_opcode(cpu);
+
+	assert_memory_equal(cpu->registers, cpu->memory + cpu->I, 16 * sizeof(unsigned char));
+
+	test_free(cpu);
+}
+
 int main(int argc, char **argv) {
 
 	const struct CMUnitTest tests[] = {
@@ -992,8 +1139,17 @@ int main(int argc, char **argv) {
 		cmocka_unit_test(test_collision_is_detected),
 		cmocka_unit_test(test_clear_screen_increments_pc),
 		cmocka_unit_test(test_clear_screen),
-		cmocka_unit_test(test_increments_pc_when_vx_equals_vy)
+		cmocka_unit_test(test_increments_pc_when_vx_equals_vy),
+
+		cmocka_unit_test(test_loads_dt_into_vx),
+		cmocka_unit_test(test_loads_vx_into_dt),
+		cmocka_unit_test(test_loads_vx_into_st),
+		cmocka_unit_test(test_adds_vx_to_i),
+		cmocka_unit_test(test_stores_bcd_value_of_vx),
+		cmocka_unit_test(test_stores_registers_in_memory),
+		cmocka_unit_test(test_reads_memory_into_registers)
 	};
 
 	return cmocka_run_group_tests(tests, NULL, NULL);
+	return 0;
 }
