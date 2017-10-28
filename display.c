@@ -63,19 +63,6 @@ void put_pixels(Display *display, unsigned char *sprite,
 }
 
 void clear(Display *display) {
-	printf("--------------------------------------->");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("Clearing the whole screen");
-	printf("--------------------------------------->");
 	memset(display->screen, 0, sizeof(display->screen));
 	SDL_RenderClear(display->renderer);
 	SDL_RenderPresent(display->renderer);
@@ -110,19 +97,13 @@ void init_display(Display *display) {
 		SDL_RenderPresent(display->renderer);
 		
 	}
-
-
-
-	//----------------------------------------
 }
 
 void destroy_display(Display *display) {
-	// SDL_Delay(3000);
-	// SDL_DestroyWindow(display->window);
-	// SDL_Renderer *renderer = SDL_GetRenderer(display->window);
-	// SDL_DestroyRenderer(display->renderer);
-	// SDL_DestroyWindow(display->window);
-	// SDL_DestroyWindow(display->window);
-	// SDL_Quit();
+	SDL_DestroyWindow(display->window);
+	SDL_DestroyRenderer(display->renderer);
+	SDL_DestroyWindow(display->window);
+	SDL_DestroyWindow(display->window);
+	SDL_Quit();
 } 
 
