@@ -1,4 +1,5 @@
 #include "display.h"
+#include "sdl.h"
 
 #include <SDL2/SDL.h>
 
@@ -7,23 +8,19 @@ void write_collision_state(Display *display, unsigned char *cpu_reg) {
 	*cpu_reg = display->collision_found;
 }
 
- void put_pixel(unsigned x, unsigned y, Display *display) {
+void put_pixel(unsigned x, unsigned y, Display *display) {
 	SDL_Rect pixel_rect;
 	pixel_rect.x = x * DISPLAY_SCALE;
 	pixel_rect.y = y * DISPLAY_SCALE;
 	pixel_rect.w = DISPLAY_SCALE;
 	pixel_rect.h = DISPLAY_SCALE;
 
-	Uint8 r;
-	Uint8 g; 
-	Uint8 b;
-	Uint8 a;
+	Uint8 r, g, b, a;
 
 	SDL_GetRenderDrawColor(display->renderer, &r, &g, &b, &a);
 	SDL_SetRenderDrawColor(display->renderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(display->renderer, &pixel_rect);
 	SDL_SetRenderDrawColor(display->renderer, r, g, b, a);
-
 }
 
 void put_pixels(Display *display, unsigned char *sprite, 
