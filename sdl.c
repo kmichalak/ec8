@@ -40,3 +40,27 @@ void get_keyboard_state(unsigned char* kbd, bool* cpu_running) {
 		}
 	}
 }
+
+void clear_screen(Screen *screen) {
+	SDL_RenderClear(screen->renderer);
+	SDL_RenderPresent(screen->renderer);
+}
+
+void init_screen(Screen *screen) {
+	screen->window = SDL_CreateWindow(
+		"Chil-8",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		screen->width * screen->scale,
+		screen->height * screen->scale,
+		SDL_WINDOW_SHOWN
+	);	
+
+	screen->renderer = SDL_CreateRenderer(
+		screen->window, -1, SDL_RENDERER_SOFTWARE
+	);
+
+	SDL_SetRenderDrawColor(screen->renderer, 0, 0, 0, 0);
+	clear_screen(screen);
+}
+

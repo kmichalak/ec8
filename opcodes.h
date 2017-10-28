@@ -9,7 +9,7 @@ typedef opcode_handler handlers[16];
 void handle_0(Cpu *cpu);
 
 // 00E0
-void clear_screen(Cpu *cpu);
+void clear_display(Cpu *cpu);
 
 // 00EE
 void return_from_rsubutine(Cpu *cpu);

@@ -12,7 +12,7 @@ void handle_0(Cpu *cpu) {
 	unsigned short opcode_arg = cpu->opcode & 0x0fff;
 	switch (opcode_arg) {
 		case 0x0E0:
-			clear_screen(cpu);
+			clear_display(cpu);
 			cpu->PC += 2;
 			break;
 		case 0x0EE:
@@ -35,7 +35,7 @@ void handle_0(Cpu *cpu) {
 }
 
 // 00E0
-void clear_screen(Cpu *cpu) {
+void clear_display(Cpu *cpu) {
 	cpu->display->clear_screen(cpu->display);
 }
 
