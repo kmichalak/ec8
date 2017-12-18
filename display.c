@@ -8,26 +8,11 @@ void write_collision_state(Display *display, unsigned char *cpu_reg) {
 	*cpu_reg = display->collision_found;
 }
 
-void put_pixel(unsigned x, unsigned y, Display *display) {
-	SDL_Rect pixel_rect;
-	pixel_rect.x = x * DISPLAY_SCALE;
-	pixel_rect.y = y * DISPLAY_SCALE;
-	pixel_rect.w = DISPLAY_SCALE;
-	pixel_rect.h = DISPLAY_SCALE;
-
-	Uint8 r, g, b, a;
-
-	SDL_GetRenderDrawColor(display->renderer, &r, &g, &b, &a);
-	SDL_SetRenderDrawColor(display->renderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(display->renderer, &pixel_rect);
-	SDL_SetRenderDrawColor(display->renderer, r, g, b, a);
-}
-
 void put_pixels(Display *display, unsigned char *sprite, 
  				 unsigned short sprite_size,
  				 unsigned char x, unsigned char y) {
 
-	SDL_RenderClear(display->renderer);
+
  	uint64_t line = 0;
  	for (int i=0; i<sprite_size; i++) {
  		uint64_t sprite_line = sprite[i];
@@ -46,23 +31,12 @@ void put_pixels(Display *display, unsigned char *sprite,
  		display->screen[y + i] = buff; 			
  	}
 
- 	for (int yy=0; yy<DISPLAY_HEIGHT; yy++) {
-		uint64_t screen_line = display->screen[yy];
-		for (int xx=0; xx<DISPLAY_WIDTH; xx++) {
-			bool pixel_on = (screen_line >> xx) & 0x1;
-			if (pixel_on) {
-				put_pixel(DISPLAY_WIDTH - xx, yy, display);
-			}
-		}
-	}	
-
-	SDL_RenderPresent(display->renderer);
+ 	draw_pixels(display->sdl_screen, display->screen);
 }
 
 void clear(Display *display) {
 	memset(display->screen, 0, sizeof(display->screen));
-	SDL_RenderClear(display->renderer);
-	SDL_RenderPresent(display->renderer);
+	clear_screen(display->sdl_screen);
 }
 
 void init_display(Display *display) {
@@ -72,35 +46,15 @@ void init_display(Display *display) {
 	display->write_collision_state = write_collision_state;
 	display->clear_screen = clear;
 
-	int status = 0;
-	status = SDL_Init(SDL_INIT_VIDEO);
-	
-	if (status == 0) {
-
-		display->window = SDL_CreateWindow(
-			"Chip-8", 
-			SDL_WINDOWPOS_UNDEFINED,
-			SDL_WINDOWPOS_UNDEFINED, 
-			DISPLAY_WIDTH * DISPLAY_SCALE, DISPLAY_HEIGHT * DISPLAY_SCALE,
-			SDL_WINDOW_SHOWN
-		);
-
-		display->renderer = SDL_CreateRenderer(
-			display->window, -1,  SDL_RENDERER_SOFTWARE
-		);
-
-		SDL_SetRenderDrawColor(display->renderer, 0, 0, 0, 0);
-		SDL_RenderClear(display->renderer);
-		SDL_RenderPresent(display->renderer);
-		
-	}
+	ScreenSize screen_size;
+	screen_size.width = DISPLAY_WIDTH;
+	screen_size.height = DISPLAY_HEIGHT;
+	screen_size.scale = DISPLAY_SCALE;
+	display->sdl_screen = malloc(sizeof(Screen));
+	init_screen(display->sdl_screen, &screen_size);
 }
 
 void destroy_display(Display *display) {
-	SDL_DestroyWindow(display->window);
-	SDL_DestroyRenderer(display->renderer);
-	SDL_DestroyWindow(display->window);
-	SDL_DestroyWindow(display->window);
-	SDL_Quit();
+	destroy_screen(display->sdl_screen);
 } 
 
