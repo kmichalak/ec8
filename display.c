@@ -1,9 +1,6 @@
 #include "display.h"
 #include "sdl.h"
 
-#include <SDL2/SDL.h>
-
-
 void write_collision_state(Display *display, unsigned char *cpu_reg) {
 	*cpu_reg = display->collision_found;
 }
